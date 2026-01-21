@@ -14,4 +14,7 @@ public interface ShooterIO {
     }
 
     public default void updateInputs(ShooterIOInputs inputs) {}
+
+    public default void setOpenLoop(double speed) {}
+
 }
