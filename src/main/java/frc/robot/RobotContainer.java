@@ -9,10 +9,7 @@ package frc.robot;
 
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-
 import com.pathplanner.lib.auto.AutoBuilder;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -22,13 +19,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -81,8 +79,7 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 new ModuleIOSim(),
-                new ModuleIOSim()
-                );
+                new ModuleIOSim());
 
         vision =
             new Vision(
@@ -97,24 +94,20 @@ public class RobotContainer {
         // (Use same number of dummy implementations as the real robot)
 
         drive =
-            new Drive(new GyroIO() {},
-            new ModuleIO() {},
-            new ModuleIO() {},
-            new ModuleIO() {},
-            new ModuleIO() {}
-          );
+            new Drive(
+                new GyroIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {});
 
-        vision = new Vision(
-          drive::addVisionMeasurement,
-          new VisionIO() {},
-          new VisionIO() {}
-        );
+        vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
 
         break;
     }
 
     // Set up auto routines
-    //it was yelling at me and it's auto so this is a later us problem
+    // it was yelling at me and it's auto so this is a later us problem
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -146,56 +139,52 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    
+
     // Joystick drive command
     drive.setDefaultCommand(
-      DriveCommands.joystickDrive(
-        drive,
-        () -> -driveController.getLeftY(),
-        () -> -driveController.getLeftX(),
-        () -> -driveController.getRightX()
-      )
-    );
+        DriveCommands.joystickDrive(
+            drive,
+            () -> -driveController.getLeftY(),
+            () -> -driveController.getLeftX(),
+            () -> -driveController.getRightX()));
 
     // Auto aim command example
     @SuppressWarnings("resource")
     PIDController aimController = new PIDController(0.2, 0.0, 0.0);
     aimController.enableContinuousInput(-Math.PI, Math.PI);
     keyboard
-    .button(1)
-    .whileTrue(
-      Commands.startRun(
-        () -> {
-          aimController.reset();
-        },
-        () -> {
-          DriveCommands.autoAim(drive, () -> aimController.calculate(vision.getTargetX(0).getRadians()));
-        },
-        drive
-      )
-    );
+        .button(1)
+        .whileTrue(
+            Commands.startRun(
+                () -> {
+                  aimController.reset();
+                },
+                () -> {
+                  DriveCommands.autoAim(
+                      drive, () -> aimController.calculate(vision.getTargetX(0).getRadians()));
+                },
+                drive));
 
-    driveController.a().whileTrue(
-      DriveCommands.joystickDriveAtAngle(
-        drive,
-        () -> -driveController.getLeftY(),
-        () -> -driveController.getLeftX(),
-        () -> Rotation2d.kZero
-      )
-    );
+    driveController
+        .a()
+        .whileTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> -driveController.getLeftY(),
+                () -> -driveController.getLeftX(),
+                () -> Rotation2d.kZero));
 
     driveController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    driveController.b().onTrue(
-      Commands.runOnce(
-        () -> drive.setPose(
-          new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)
-        ),
-        drive
-      )
-      .ignoringDisable(true)
-    );
-
+    driveController
+        .b()
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        drive.setPose(
+                            new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
+                    drive)
+                .ignoringDisable(true));
   }
 
   /**

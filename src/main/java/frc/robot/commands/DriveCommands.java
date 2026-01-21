@@ -8,7 +8,6 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -152,15 +151,11 @@ public class DriveCommands {
         .beforeStarting(() -> angleController.reset(drive.getRotation().getRadians()));
   }
 
-  public static Command autoAim(
-    Drive drive,
-    DoubleSupplier omegaSupplier
-    ) {
+  public static Command autoAim(Drive drive, DoubleSupplier omegaSupplier) {
 
-      return Commands.run(
-
+    return Commands.run(
         () -> {
-        // Apply rotation deadband
+          // Apply rotation deadband
           double omega = MathUtil.applyDeadband(omegaSupplier.getAsDouble(), DEADBAND);
 
           // Square rotation value for more precise control
@@ -168,29 +163,21 @@ public class DriveCommands {
 
           // Convert to field relative speeds & send command
           ChassisSpeeds speeds =
-            new ChassisSpeeds(
-              0,
-              0,
-              omega * drive.getMaxAngularSpeedRadPerSec()
-            );
+              new ChassisSpeeds(0, 0, omega * drive.getMaxAngularSpeedRadPerSec());
 
           boolean isFlipped =
-            DriverStation.getAlliance().isPresent()
-            && DriverStation.getAlliance().get() == Alliance.Red;
-          
+              DriverStation.getAlliance().isPresent()
+                  && DriverStation.getAlliance().get() == Alliance.Red;
+
           drive.runVelocity(
-            ChassisSpeeds.fromFieldRelativeSpeeds(
-              speeds,
-              isFlipped
-              ? drive.getRotation().plus(new Rotation2d(Math.PI))
-              : drive.getRotation()
-            )
-          );
+              ChassisSpeeds.fromFieldRelativeSpeeds(
+                  speeds,
+                  isFlipped
+                      ? drive.getRotation().plus(new Rotation2d(Math.PI))
+                      : drive.getRotation()));
         },
-        drive
-      );
-    }
-    
+        drive);
+  }
 
   /**
    * Measures the velocity feedforward constants for the drive motors.
