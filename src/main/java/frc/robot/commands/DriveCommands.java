@@ -126,13 +126,12 @@ public class DriveCommands {
               boolean isFlipped =
                   DriverStation.getAlliance().isPresent()
                       && DriverStation.getAlliance().get() == Alliance.Red;
-                      
+
               // Get linear velocity
               Translation2d linearVelocity =
                   getLinearVelocityFromJoysticks(
-                    xSupplier.getAsDouble() * (isFlipped ? -1 : 1),
-                    ySupplier.getAsDouble() * (isFlipped ? -1 : 1)
-                  );
+                      xSupplier.getAsDouble() * (isFlipped ? -1 : 1),
+                      ySupplier.getAsDouble() * (isFlipped ? -1 : 1));
 
               // Calculate angular speed
               double omega =
