@@ -4,8 +4,14 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase {
 
-    public Shooter(ShooterIO io) {}
+  private final ShooterIO io;
 
-    public void setMotor(double speed) {}
-    
+  public Shooter(ShooterIO io) {
+
+    this.io = io;
+  }
+
+  public void setMotor(double speed) {
+    io.setOpenLoop(speed);
+  }
 }

@@ -14,8 +14,11 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.ShooterRun;
 import frc.robot.subsystems.drive.DemoDrive;
+import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.ShooterIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOLimelight;
@@ -29,9 +32,10 @@ import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
  */
 public class RobotContainer {
   private final Vision vision;
-
+  private final Shooter shooter = new Shooter(new ShooterIOTalonFX());
   private final DemoDrive drive = new DemoDrive(); // Demo drive subsystem, sim only
-  private final CommandGenericHID keyboard = new CommandGenericHID(0); // Keyboard 0 on port 0
+  // private final CommandGenericHID keyboard = new CommandGenericHID(0); // Keyboard 0 on port 0
+  private final CommandXboxController controller = new CommandXboxController(0);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -81,7 +85,7 @@ public class RobotContainer {
     drive.setDefaultCommand(
         Commands.run(
             () -> {
-              drive.run(-keyboard.getRawAxis(1), -keyboard.getRawAxis(0));
+              drive.run(-controller.getRawAxis(1), -controller.getRawAxis(0));
             },
             drive));
 
@@ -89,8 +93,8 @@ public class RobotContainer {
     @SuppressWarnings("resource")
     PIDController aimController = new PIDController(0.2, 0.0, 0.0);
     aimController.enableContinuousInput(-Math.PI, Math.PI);
-    keyboard
-        .button(1)
+    controller
+        .a()
         .whileTrue(
             Commands.startRun(
                 () -> {
@@ -100,6 +104,9 @@ public class RobotContainer {
                   drive.run(0.0, aimController.calculate(vision.getTargetX(0).getRadians()));
                 },
                 drive));
+
+    // Shooter button binding
+    controller.x().whileTrue(new ShooterRun(shooter));
   }
 
   /**
