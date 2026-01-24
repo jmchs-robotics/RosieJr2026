@@ -9,7 +9,7 @@ public interface ShooterIO {
 
     public double shooterCurrentAmps = 0.0;
     public double shooterAppliedVolts = 0.0;
-    public double shooterVelocityRadPerSec = 0.0;
+    public double shooterVelocityRotPerSec = 0.0;
   }
 
   public default void updateInputs(ShooterIOInputs inputs) {}

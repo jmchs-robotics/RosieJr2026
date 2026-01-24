@@ -12,7 +12,11 @@ public class ShooterIOTalonFX implements ShooterIO {
   }
 
   @Override
-  public void updateInputs(ShooterIOInputs inputs) {}
+  public void updateInputs(ShooterIOInputs inputs) {
+    inputs.shooterAppliedVolts = shooterMotor.getSupplyVoltage().getValueAsDouble();
+    inputs.shooterCurrentAmps = shooterMotor.getSupplyCurrent().getValueAsDouble();
+    inputs.shooterVelocityRotPerSec = shooterMotor.getRotorPosition().getValueAsDouble();
+  }
 
   @Override
   public void setOpenLoop(double speed) {

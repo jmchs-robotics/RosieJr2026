@@ -6,9 +6,16 @@ public class Shooter extends SubsystemBase {
 
   private final ShooterIO io;
 
-  public Shooter(ShooterIO io) {
+  private final ShooterIOInputsAutoLogged inputs;
 
+  public Shooter(ShooterIO io) {
     this.io = io;
+    inputs = new ShooterIOInputsAutoLogged();
+  }
+
+  @Override
+  public void periodic() {
+    io.updateInputs(inputs);
   }
 
   public void setMotor(double speed) {
