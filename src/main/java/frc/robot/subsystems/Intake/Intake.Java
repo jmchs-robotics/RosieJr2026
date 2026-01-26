@@ -1,0 +1,25 @@
+package frc.robot.subsystems.intake;
+//kraken 60 and neo vortex
+
+import edu.wdi.first.wpilib2.command.SubsystemBase;
+
+public class Intake extends SubsystemBase {
+
+    private final IntakeIO io;
+
+    private final IntakeIOInputsAutoLogged inputs;
+
+    public Intake(IntakeIO io) {
+        this.io = io;
+        inputs = new IntakeIOInputsAutoLogged();
+    }
+
+    @Override
+    public void periodic() {
+        io.updateInputs(inputs);
+    }
+
+    public void setMotor(double speed) {
+        io.setOpenLoop(speed);
+    }
+}
