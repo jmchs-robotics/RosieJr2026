@@ -20,11 +20,11 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.commands.IntakeRun;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.drive.*;
-import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.vision.VisionIO;
-import frc.robot.subsystems.vision.VisionIOLimelight;
+import frc.robot.subsystems.intake.*;
+import frc.robot.subsystems.vision.*;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -39,6 +39,7 @@ public class RobotContainer {
   private final Vision vision;
   private final CommandXboxController driveController = new CommandXboxController(0);
   private final Drive drive;
+  private final Intake intake;
   private final LoggedDashboardChooser<Command> autoChooser;
 
   private final CommandGenericHID keyboard = new CommandGenericHID(1); // Keyboard 0 on port 0
@@ -47,6 +48,7 @@ public class RobotContainer {
   public RobotContainer() {
     switch (Constants.currentMode) {
       case REAL:
+    
 
         // Real robot, instantiate hardware IO implementations
 
@@ -63,6 +65,8 @@ public class RobotContainer {
                 drive::addVisionMeasurement,
                 new VisionIOLimelight(camera0Name, drive::getRotation),
                 new VisionIOLimelight(camera1Name, drive::getRotation));
+
+        intake = new Intake(new IntakeIOSparkFlex());
         // vision =
         // new Vision(
         // demoDrive::addVisionMeasurement,
@@ -86,6 +90,8 @@ public class RobotContainer {
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVisionSim(camera0Name, robotToCamera0, drive::getPose),
                 new VisionIOPhotonVisionSim(camera1Name, robotToCamera1, drive::getPose));
+        
+        intake = new Intake(new IntakeIOSparkFlex());
         break;
 
       default:
@@ -103,6 +109,7 @@ public class RobotContainer {
 
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
 
+        intake = new Intake(new IntakeIOSparkFlex());
         break;
     }
 
@@ -184,6 +191,8 @@ public class RobotContainer {
                 () -> Rotation2d.kZero));
 
     driveController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+
+    driveController.y().whileTrue(new IntakeRun(intake));
 
     // driveController
     //     .b()
