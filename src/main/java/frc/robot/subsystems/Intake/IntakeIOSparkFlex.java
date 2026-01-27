@@ -1,14 +1,14 @@
 package frc.robot.subsystems.Intake;
 
-import com.ctre.phoenix6.hardware.TalonFX;
+import com.revrobotics.spark.SparkFlex;
 
-    public class IntakeIOTalonFX implements IntakeIO {
+    public class IntakeIOSparkFlex implements IntakeIO {
     
-        private final TalonFX intakeMotor;
+        private final SparkFlex intakeMotor;
 
-        public IntakeIOTalonFX() {
+        public IntakeIOSparkFlex() {
 
-            intakeMotor = new TalonFX(10);
+            intakeMotor = new SparkFlex(10, null);
         }
 
     @Override
