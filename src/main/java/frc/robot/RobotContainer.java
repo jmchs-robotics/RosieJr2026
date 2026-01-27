@@ -61,10 +61,10 @@ public class RobotContainer {
         //         new VisionIOLimelight(camera1, drive::getRotation),
         //         new VisionIOLimelight(camera1Name, drive::getRotation));
         vision =
-        new Vision(
-        drive::addVisionMeasurement,
-        new VisionIOPhotonVision(bulldogCam1, robotToCamera1),
-        new VisionIOPhotonVision(bulldogCam2, robotToCamera2));
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOPhotonVision(bulldogCam1, robotToCamera1),
+                new VisionIOPhotonVision(bulldogCam2, robotToCamera2));
         break;
 
       case SIM:

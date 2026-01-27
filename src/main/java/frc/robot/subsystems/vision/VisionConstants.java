@@ -27,15 +27,23 @@ public class VisionConstants {
   // (Not used by Limelight, configure in web UI instead)
   // TODO change to RosieJr values from the current Calypso ones
   public static Transform3d robotToCamera1 =
-      new Transform3d(new Translation3d(Units.inchesToMeters(12.223), Units.inchesToMeters(11.624), Units.inchesToMeters(8.642)),
-      new Rotation3d(0, 0, Units.degreesToRadians(-30)));
+      new Transform3d(
+          new Translation3d(
+              Units.inchesToMeters(12.223),
+              Units.inchesToMeters(11.624),
+              Units.inchesToMeters(8.642)),
+          new Rotation3d(0, 0, Units.degreesToRadians(-30)));
   public static Transform3d robotToCamera2 =
-      new Transform3d(new Translation3d(Units.inchesToMeters(12.223), Units.inchesToMeters(-11.624), Units.inchesToMeters(8.642)), 
-      new Rotation3d(0, 0, Units.degreesToRadians(30)));
+      new Transform3d(
+          new Translation3d(
+              Units.inchesToMeters(12.223),
+              Units.inchesToMeters(-11.624),
+              Units.inchesToMeters(8.642)),
+          new Rotation3d(0, 0, Units.degreesToRadians(30)));
 
   // Basic filtering thresholds
   public static double maxAmbiguity = 0.3;
-  public static double maxZError = 0.75;
+  public static double maxZError = 1_000;
 
   // Standard deviation baselines, for 1 meter distance and 1 tag
   // (Adjusted automatically based on distance and # of tags)
