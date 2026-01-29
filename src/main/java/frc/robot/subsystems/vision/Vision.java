@@ -45,7 +45,7 @@ public class Vision extends SubsystemBase {
     for (int i = 0; i < inputs.length; i++) {
       disconnectedAlerts[i] =
           new Alert(
-              "Vision camera " + Integer.toString(i) + " is disconnected.", AlertType.kWarning);
+              "bulldogCam" + Integer.toString(i + 1) + " is disconnected.", AlertType.kWarning);
     }
   }
 
@@ -62,7 +62,7 @@ public class Vision extends SubsystemBase {
   public void periodic() {
     for (int i = 0; i < io.length; i++) {
       io[i].updateInputs(inputs[i]);
-      Logger.processInputs("Vision/Camera" + Integer.toString(i), inputs[i]);
+      Logger.processInputs("Vision/Camera" + Integer.toString(i + 1), inputs[i]);
     }
 
     // Initialize logging values
