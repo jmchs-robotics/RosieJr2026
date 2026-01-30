@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.drive.*;
+import frc.robot.subsystems.oculus.Oculus;
 import frc.robot.subsystems.vision.*;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -37,6 +38,7 @@ public class RobotContainer {
   private final CommandXboxController driveController = new CommandXboxController(0);
   private final Drive drive;
   private final LoggedDashboardChooser<Command> autoChooser;
+  private final Oculus oculus;
 
   private final CommandGenericHID keyboard = new CommandGenericHID(1); // Keyboard 0 on port 0
 
@@ -102,6 +104,8 @@ public class RobotContainer {
 
         break;
     }
+
+    oculus = new Oculus(drive);
 
     // Set up auto routines
     // it was yelling at me and it's auto so this is a later us problem
