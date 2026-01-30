@@ -24,7 +24,7 @@ public class Intake extends SubsystemBase {
     io.setOpenLoop(speed);
   }
 
-  public void Position(Angle angle) {
+  public void setPosition(Angle angle) {
     io.setPosition(angle);
   }
 }
