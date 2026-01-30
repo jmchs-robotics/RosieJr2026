@@ -3,13 +3,16 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.intake.Intake;
 
-public class IntakeRun extends Command {
+public class SlapDown extends Command {
 
-  private final Intake m_Intake;
+      private final Intake m_slapDown;
 
-  public IntakeRun(Intake Intake) {
-    m_Intake = Intake;
-    addRequirements(m_Intake);
+
+  public SlapDown(Intake slapDown) {
+    
+    m_slapDown = slapDown;
+    addRequirements(m_slapDown);
+
   }
 
   @Override
@@ -17,11 +20,11 @@ public class IntakeRun extends Command {
 
   @Override
   public void execute() {
-    m_Intake.setMotor(0);
+    
   }
 
   @Override
   public void end(boolean interrupted) {
-    m_Intake.setMotor(0);
+    m_slapDown.setMotor(0);
   }
 }

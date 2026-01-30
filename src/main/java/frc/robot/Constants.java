@@ -28,4 +28,15 @@ public final class Constants {
     /** Replaying from a log file. */
     REPLAY
   }
+
+  public static final class IntakeConstants {
+
+    public static final int IntakeMotorID = 12;
+
+    public static final double kP = 10;
+    public static final double kI = 1;
+    public static final double kD = 0.1;
+
+  }
 }
+

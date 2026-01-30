@@ -22,12 +22,11 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.IntakeRun;
+import frc.robot.commands.SlapDown;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.intake.*;
 import frc.robot.subsystems.vision.*;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
-import pabeles.concurrency.IntRangeObjectTask;
-
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -67,7 +66,6 @@ public class RobotContainer {
                 new VisionIOLimelight(camera0Name, drive::getRotation),
                 new VisionIOLimelight(camera1Name, drive::getRotation));
 
-        intake = new Intake(new IntakeIOSparkFlex());
         // vision =
         // new Vision(
         // demoDrive::addVisionMeasurement,
@@ -91,8 +89,6 @@ public class RobotContainer {
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVisionSim(camera0Name, robotToCamera0, drive::getPose),
                 new VisionIOPhotonVisionSim(camera1Name, robotToCamera1, drive::getPose));
-
-        intake = new Intake(new IntakeIOSparkFlex());
         break;
 
       default:
@@ -110,9 +106,10 @@ public class RobotContainer {
 
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
 
-        intake = new Intake(new IntakeIOSparkFlex());
         break;
     }
+
+    intake = new Intake(new IntakeIOMotors());
 
     // Set up auto routines
     // it was yelling at me and it's auto so this is a later us problem
@@ -194,6 +191,8 @@ public class RobotContainer {
     driveController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     driveController.y().whileTrue(new IntakeRun(intake));
+
+    driveController.povDown().onTrue(new SlapDown(intake));
 
     // driveController
     //     .b()

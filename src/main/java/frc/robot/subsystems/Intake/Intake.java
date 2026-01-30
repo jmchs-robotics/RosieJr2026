@@ -1,6 +1,7 @@
 package frc.robot.subsystems.intake;
 // kraken 60 and neo vortex
 // addie put this in to check
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
@@ -21,5 +22,9 @@ public class Intake extends SubsystemBase {
 
   public void setMotor(double speed) {
     io.setOpenLoop(speed);
+  }
+
+  public void Position(Angle angle) {
+    io.setPosition(angle);
   }
 }
