@@ -11,10 +11,10 @@ public class ShooterRun extends Command {
     m_Shooter = Shooter;
     addRequirements(m_Shooter);
   }
-
+  // this for motor speed
   @Override
   public void execute() {
-    m_Shooter.setMotor(0.8);
+    m_Shooter.setMotor(0.9);
   }
 
   @Override

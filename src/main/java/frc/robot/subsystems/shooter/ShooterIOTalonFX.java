@@ -20,6 +20,6 @@ public class ShooterIOTalonFX implements ShooterIO {
 
   @Override
   public void setOpenLoop(double speed) {
-    shooterMotor.set(speed);
+    shooterMotor.set(-speed);
   }
 }
