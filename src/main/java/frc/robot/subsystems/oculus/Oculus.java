@@ -28,8 +28,8 @@ public class Oculus extends SubsystemBase {
 
     for (PoseFrame questFrame : poseFrame) {
 
+      questPose = questFrame.questPose3d();
       Pose3d robotPose = questPose.transformBy(OculusConstants.ROBOT_TO_QUEST.inverse());
-      questNav.setPose(questPose);
 
       // Make sure the Quest was tracking the pose for this frame
       if (questFrame.isTracking()) {
