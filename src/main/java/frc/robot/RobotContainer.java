@@ -13,6 +13,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -25,6 +26,9 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.vision.*;
+import org.ironmaple.simulation.SimulatedArena;
+import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -39,6 +43,8 @@ public class RobotContainer {
   private final CommandXboxController driveController = new CommandXboxController(0);
   private final Drive drive;
   private final LoggedDashboardChooser<Command> autoChooser;
+
+  private SwerveDriveSimulation driveSimulation = null;
 
   private final CommandGenericHID keyboard = new CommandGenericHID(1); // Keyboard 0 on port 0
 
@@ -55,7 +61,8 @@ public class RobotContainer {
                 new ModuleIOSpark(0),
                 new ModuleIOSpark(1),
                 new ModuleIOSpark(2),
-                new ModuleIOSpark(3));
+                new ModuleIOSpark(3),
+                (pose) -> {});
 
         // vision =
         //     new Vision(
@@ -72,19 +79,28 @@ public class RobotContainer {
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
 
+        this.driveSimulation =
+            new SwerveDriveSimulation(
+                DriveConstants.mapleSimConfig, new Pose2d(3, 3, new Rotation2d()));
+        // add the simulated drivetrain to the simulation field
+        SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
+        // Sim robot, instantiate physics sim IO implementations
         drive =
             new Drive(
-                new GyroIO() {},
-                new ModuleIOSim(),
-                new ModuleIOSim(),
-                new ModuleIOSim(),
-                new ModuleIOSim());
+                new GyroIOSim(driveSimulation.getGyroSimulation()),
+                new ModuleIOSim(driveSimulation.getModules()[0]),
+                new ModuleIOSim(driveSimulation.getModules()[1]),
+                new ModuleIOSim(driveSimulation.getModules()[2]),
+                new ModuleIOSim(driveSimulation.getModules()[3]),
+                driveSimulation::setSimulationWorldPose);
 
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                new VisionIOPhotonVisionSim(bulldogCam1, robotToCamera1, drive::getPose),
-                new VisionIOPhotonVisionSim(bulldogCam2, robotToCamera2, drive::getPose));
+                new VisionIOPhotonVisionSim(
+                    bulldogCam1, robotToCamera1, driveSimulation::getSimulatedDriveTrainPose),
+                new VisionIOPhotonVisionSim(
+                    bulldogCam2, robotToCamera2, driveSimulation::getSimulatedDriveTrainPose));
         break;
 
       default:
@@ -98,7 +114,8 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {},
-                new ModuleIO() {});
+                new ModuleIO() {},
+                (pose) -> {});
 
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
 
@@ -204,5 +221,22 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return Commands.none();
+  }
+
+  public void resetSimulationField() {
+    if (Constants.currentMode != Constants.Mode.SIM) return;
+
+    drive.setPose(new Pose2d(3, 3, new Rotation2d()));
+    SimulatedArena.getInstance().resetFieldForAuto();
+  }
+
+  public void updateSimulation() {
+    if (Constants.currentMode != Constants.Mode.SIM) return;
+
+    SimulatedArena.getInstance().simulationPeriodic();
+    Logger.recordOutput(
+        "FieldSimulation/RobotPosition", driveSimulation.getSimulatedDriveTrainPose());
+    Logger.recordOutput(
+        "FieldSimulation/Fuel", SimulatedArena.getInstance().getGamePiecesArrayByType("Fuel"));
   }
 }
