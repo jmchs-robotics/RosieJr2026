@@ -7,14 +7,12 @@ import frc.robot.subsystems.intake.Intake;
 
 public class SlapDown extends Command {
 
-      private final Intake m_slapDown;
-
+  private final Intake m_slapDown;
 
   public SlapDown(Intake slapDown) {
-    
+
     m_slapDown = slapDown;
     addRequirements(m_slapDown);
-
   }
 
   @Override

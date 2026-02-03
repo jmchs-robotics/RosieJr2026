@@ -28,7 +28,7 @@ public class IntakeIOMotors implements IntakeIO {
         Units.Rotations.of(0).in(Units.Rotations);
 
     intakeMotor = new SparkFlex(10, MotorType.kBrushless);
-    
+
     config = new TalonFXConfiguration();
 
     config.Slot0.kP = IntakeConstants.kP;
@@ -46,13 +46,14 @@ public class IntakeIOMotors implements IntakeIO {
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
 
-    //"wok" - max walley 2026
+    // "wok" - max walley 2026
     inputs.intakeAppliedVolts = intakeMotor.getBusVoltage() * intakeMotor.getAppliedOutput();
     inputs.intakeCurrentAmps = intakeMotor.getOutputCurrent();
     inputs.intakeVelocityRotPerSec = intakeMotor.getEncoder().getVelocity();
     inputs.intakeSlapDownAppliedVolts = intakeSlapDownMotor.getSupplyVoltage().getValueAsDouble();
     inputs.intakeSlapDownCurrentAmps = intakeSlapDownMotor.getSupplyCurrent().getValueAsDouble();
-    inputs.intakeSlapDownVelocityRotPerSec = intakeSlapDownMotor.getRotorVelocity().getValueAsDouble();
+    inputs.intakeSlapDownVelocityRotPerSec =
+        intakeSlapDownMotor.getRotorVelocity().getValueAsDouble();
   }
 
   @Override
@@ -64,5 +65,4 @@ public class IntakeIOMotors implements IntakeIO {
   public void setPosition(Angle angle) {
     intakeSlapDownMotor.setControl(new PositionVoltage(angle.in(Units.Rotations)));
   }
-
 }

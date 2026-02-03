@@ -3,6 +3,7 @@ package frc.robot.subsystems.intake;
 // addie put this in to check
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.Intake.IntakeIOInputsAutoLogged;
 
 public class Intake extends SubsystemBase {
 
