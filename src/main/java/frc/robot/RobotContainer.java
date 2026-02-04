@@ -10,6 +10,7 @@ package frc.robot;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -121,9 +122,11 @@ public class RobotContainer {
     }
 
     // Set up auto routines
-    // it was yelling at me and it's auto so this is a later us problem
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+    // TODO add the actual commands when merged
+    NamedCommands.registerCommand("intake", Commands.none());
+    NamedCommands.registerCommand("shoot", Commands.none());
 
     // Set up SysId routines
 
@@ -216,7 +219,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return Commands.none();
+    return autoChooser.get();
   }
 
   public void resetSimulationField() {
