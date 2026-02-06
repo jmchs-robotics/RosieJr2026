@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -19,12 +20,14 @@ public class DriveToPose extends Command {
   private static final LoggedTunableNumber thetakD = new LoggedTunableNumber("DriveToPose/ThetakD");
 
   private static boolean isFlipped = false;
+  private static final Translation2d hubPose =
+      new Translation2d(Units.inchesToMeters(182.11), Units.inchesToMeters(158.84));
 
   private final CommandXboxController driveController;
 
   static {
-    thetakP.initDefault(5.0);
-    thetakD.initDefault(0.5);
+    thetakP.initDefault(10.0);
+    thetakD.initDefault(0.4);
   }
 
   private final Drive drive;
@@ -52,30 +55,28 @@ public class DriveToPose extends Command {
   public void execute() {
     thetaController.setP(thetakP.get());
     thetaController.setD(thetakD.get());
+    Pose2d currentPose = drive.getPose();
+
+    Rotation2d currentToHubAngle = hubPose.minus(currentPose.getTranslation()).getAngle();
 
     double thetaVelocity;
     if (!isFlipped) {
       thetaVelocity =
           thetaController.calculate(
-              drive.getRotation().getRadians(), Constants.hubPose.getRotation().getRadians());
+              drive.getRotation().getRadians(), currentToHubAngle.getRadians());
     } else {
       thetaVelocity =
           thetaController.calculate(
               drive.getRotation().getRadians(),
-              Constants.hubPose
-                  .rotateAround(
-                      new Translation2d(Units.inchesToMeters(325.61), Units.inchesToMeters(158.84)),
-                      new Rotation2d(180))
-                  .getRotation()
-                  .getRadians());
+              currentToHubAngle.minus(Rotation2d.kPi).getRadians());
     }
 
     if (drive != null) {
       drive.runVelocity(
           ChassisSpeeds.fromFieldRelativeSpeeds(
-              driveController.getLeftX(),
-              driveController.getLeftY(),
-              thetaVelocity,
+              driveController.getLeftX() * drive.getMaxLinearSpeedMetersPerSec(),
+              driveController.getLeftY() * drive.getMaxLinearSpeedMetersPerSec(),
+              thetaVelocity * drive.getMaxAngularSpeedRadPerSec(),
               drive.getRotation()));
     }
   }
