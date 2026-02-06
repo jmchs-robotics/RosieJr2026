@@ -26,7 +26,7 @@ public final class Constants {
   public static final Pose2d hubPose =
       new Pose2d(
           new Translation2d(Units.inchesToMeters(182.11), Units.inchesToMeters(158.84)),
-          new Rotation2d().fromDegrees(0));
+          Rotation2d.fromDegrees(0));
 
   public static boolean disableHAL = false;
 

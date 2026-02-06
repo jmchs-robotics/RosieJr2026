@@ -18,8 +18,6 @@ public class DriveToPose extends Command {
   private static final LoggedTunableNumber thetakP = new LoggedTunableNumber("DriveToPose/ThetakP");
   private static final LoggedTunableNumber thetakD = new LoggedTunableNumber("DriveToPose/ThetakD");
 
-  private Rotation2d lastGoalRotation = Rotation2d.kZero;
-
   private static boolean isFlipped = false;
 
   private final CommandXboxController driveController;
