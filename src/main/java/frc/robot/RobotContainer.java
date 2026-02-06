@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.DriveToPose;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.vision.*;
 import org.ironmaple.simulation.SimulatedArena;
@@ -201,6 +202,8 @@ public class RobotContainer {
                 () -> Rotation2d.kZero));
 
     driveController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+
+    driveController.povDown().whileTrue(new DriveToPose(drive, driveController));
 
     // driveController
     //     .b()
