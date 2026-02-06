@@ -5,20 +5,22 @@ import frc.robot.subsystems.shooter.Shooter;
 
 public class ShooterRun extends Command {
 
-  private final Shooter m_Shooter;
+  private final Shooter m_shooter;
+  double speed = 0;
 
-  public ShooterRun(Shooter Shooter) {
-    m_Shooter = Shooter;
-    addRequirements(m_Shooter);
+  public ShooterRun(Shooter shooter) {
+    m_shooter = shooter;
+    addRequirements(m_shooter);
   }
   // this for motor speed
   @Override
   public void execute() {
-    m_Shooter.setMotor(0.65);
+    speed = m_shooter.calculateSpeed();
+    m_shooter.setMotor(speed);
   }
 
   @Override
   public void end(boolean interrupted) {
-    m_Shooter.setMotor(0.0);
+    m_shooter.setMotor(0.0);
   }
 }
