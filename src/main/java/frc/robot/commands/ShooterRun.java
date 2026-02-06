@@ -14,7 +14,7 @@ public class ShooterRun extends Command {
   // this for motor speed
   @Override
   public void execute() {
-    m_Shooter.setMotor(0.9);
+    m_Shooter.setMotor(0.65);
   }
 
   @Override
