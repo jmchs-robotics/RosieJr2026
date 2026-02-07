@@ -1,16 +1,16 @@
 package frc.robot.commands;
 
-import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.Constants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.util.LoggedTunableNumber;
 
@@ -26,14 +26,14 @@ public class DriveToPose extends Command {
   private final CommandXboxController driveController;
 
   static {
-    thetakP.initDefault(10.0);
-    thetakD.initDefault(0.4);
+    thetakP.initDefault(10);
+    thetakD.initDefault(0.8);
   }
 
   private final Drive drive;
 
-  private final PIDController thetaController =
-      new PIDController(0.0, 0.0, 0.0, Constants.loopPeriodSecs);
+  private final ProfiledPIDController thetaController =
+      new ProfiledPIDController(thetakP.get(), 0.0, thetakD.get(), new Constraints(8.0, 20.0));
 
   public DriveToPose(Drive drive, CommandXboxController driveController) {
     this.drive = drive;
@@ -48,7 +48,7 @@ public class DriveToPose extends Command {
   @Override
   public void initialize() {
     isFlipped = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red;
-    thetaController.reset();
+    thetaController.reset(drive.getRotation().getRadians());
   }
 
   @Override
@@ -74,9 +74,9 @@ public class DriveToPose extends Command {
     if (drive != null) {
       drive.runVelocity(
           ChassisSpeeds.fromFieldRelativeSpeeds(
-              driveController.getLeftX() * drive.getMaxLinearSpeedMetersPerSec(),
-              driveController.getLeftY() * drive.getMaxLinearSpeedMetersPerSec(),
-              thetaVelocity * drive.getMaxAngularSpeedRadPerSec(),
+              -driveController.getLeftY() * drive.getMaxLinearSpeedMetersPerSec(),
+              -driveController.getLeftX() * drive.getMaxLinearSpeedMetersPerSec(),
+              thetaVelocity, // * drive.getMaxAngularSpeedRadPerSec(),
               drive.getRotation()));
     }
   }
