@@ -38,7 +38,7 @@ public class Shooter extends SubsystemBase {
         (shooterToHub * Math.sin(ShooterConstants.shooterTheta)
                 - (2
                     * Math.cos(ShooterConstants.shooterTheta)
-                    * (ShooterConstants.ShooterToHubdeltaZ + shooterToHub)))
+                    * (ShooterConstants.ShooterToHubdeltaZ + ShooterConstants.arcToHub)))
             / (Math.sin(ShooterConstants.shooterTheta)
                 * Math.cos(ShooterConstants.shooterTheta)
                 * Math.sqrt((2 * ShooterConstants.arcToHub / ShooterConstants.gravity)));
