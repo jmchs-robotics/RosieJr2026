@@ -29,8 +29,21 @@ public class Shooter extends SubsystemBase {
   }
 
   public double calculateSpeed() {
-    double shooterToHub = Constants.hubPose.getDistance(drive.getPose().getTranslation());
-    double speed = 0.65;
-    return speed;
+    double shooterToHub =
+        Constants.hubPose.getDistance(
+            drive.getPose().getTranslation()); // distance between shooter and hub
+
+    // Aiden's magic equation
+    double velocity =
+        (shooterToHub * Math.sin(ShooterConstants.shooterTheta)
+                - (2
+                    * Math.cos(ShooterConstants.shooterTheta)
+                    * (ShooterConstants.ShooterToHubdeltaZ + shooterToHub)))
+            / (Math.sin(ShooterConstants.shooterTheta)
+                * Math.cos(ShooterConstants.shooterTheta)
+                * Math.sqrt((2 * ShooterConstants.arcToHub / ShooterConstants.gravity)));
+
+    double motorSpeed = 0.65;
+    return motorSpeed;
   }
 }
