@@ -24,20 +24,12 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.*;
 import frc.robot.subsystems.drive.*;
+import frc.robot.subsystems.shooter.*;
 import frc.robot.subsystems.vision.*;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.ShooterRun;
-import frc.robot.subsystems.drive.DemoDrive;
-import frc.robot.subsystems.shooter.Shooter;
-import frc.robot.subsystems.shooter.ShooterIOTalonFX;
-import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.vision.VisionIO;
-import frc.robot.subsystems.vision.VisionIOLimelight;
-import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -55,8 +47,7 @@ public class RobotContainer {
   private SwerveDriveSimulation driveSimulation = null;
 
   private final CommandGenericHID keyboard = new CommandGenericHID(1); // Keyboard 0 on port 0
-  private final Shooter shooter = new Shooter(new ShooterIOTalonFX());
-  private final DemoDrive drive = new DemoDrive(); // Demo drive subsystem, sim only
+  private final Shooter shooter;
   // private final CommandGenericHID keyboard = new CommandGenericHID(0); // Keyboard 0 on port 0
   private final CommandXboxController controller = new CommandXboxController(0);
 
@@ -159,6 +150,8 @@ public class RobotContainer {
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
     // Configure the button bindings
 
+    shooter = new Shooter(new ShooterIOTalonFX(), drive);
+
     configureButtonBindings();
   }
 
@@ -225,7 +218,7 @@ public class RobotContainer {
     //                 drive)
     //             .ignoringDisable(true));
     // Shooter button binding
-    controller.x().whileTrue(new ShooterRun(shooter));
+    controller.y().whileTrue(new ShooterRun(shooter));
   }
 
   /**
