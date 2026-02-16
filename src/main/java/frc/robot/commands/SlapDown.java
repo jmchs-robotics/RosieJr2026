@@ -25,6 +25,6 @@ public class SlapDown extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    m_slapDown.setMotor(0);
+    m_slapDown.setSlapDownMotor(0);
   }
 }

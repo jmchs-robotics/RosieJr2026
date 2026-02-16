@@ -3,7 +3,6 @@ package frc.robot.subsystems.intake;
 // addie put this in to check
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.Intake.IntakeIOInputsAutoLogged;
 
 public class Intake extends SubsystemBase {
 
@@ -21,8 +20,12 @@ public class Intake extends SubsystemBase {
     io.updateInputs(inputs);
   }
 
-  public void setMotor(double speed) {
-    io.setOpenLoop(speed);
+  public void setWheelMotor(double speed) {
+    io.setOpenLoopWheels(speed);
+  }
+
+  public void setSlapDownMotor(double speed) {
+    io.setOpenLoopSlapDown(speed);
   }
 
   public void setPosition(Angle angle) {

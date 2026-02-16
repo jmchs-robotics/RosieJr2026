@@ -17,11 +17,11 @@ public class IntakeRun extends Command {
 
   @Override
   public void execute() {
-    m_Intake.setMotor(0);
+    m_Intake.setWheelMotor(0.3);
   }
 
   @Override
   public void end(boolean interrupted) {
-    m_Intake.setMotor(0);
+    m_Intake.setWheelMotor(0);
   }
 }

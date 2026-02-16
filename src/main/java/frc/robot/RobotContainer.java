@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.HopperRun;
 import frc.robot.commands.IntakeRun;
 import frc.robot.commands.SlapDown;
 import frc.robot.subsystems.drive.*;
@@ -38,9 +39,11 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
 
   private final Vision vision;
-  private final CommandXboxController driveController = new CommandXboxController(0);
   private final Drive drive;
   private final Intake intake;
+  private final Hopper hopper;
+  
+  private final CommandXboxController driveController = new CommandXboxController(0);
   private final LoggedDashboardChooser<Command> autoChooser;
 
   private final CommandGenericHID keyboard = new CommandGenericHID(1); // Keyboard 0 on port 0
@@ -110,6 +113,8 @@ public class RobotContainer {
     }
 
     intake = new Intake(new IntakeIOMotors());
+
+    hopper = new Hopper(new HopperIOMotor());
 
     // Set up auto routines
     // it was yelling at me and it's auto so this is a later us problem
@@ -190,7 +195,12 @@ public class RobotContainer {
 
     driveController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    driveController.y().whileTrue(new IntakeRun(intake));
+    driveController.y().whileTrue(Commands.parallel(
+      new IntakeRun(intake),
+      new HopperRun(hopper)
+    ));
+
+    driveController.rightBumper().whileTrue(new HopperRun(hopper));
 
     driveController.povDown().onTrue(new SlapDown(intake));
 

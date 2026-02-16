@@ -57,8 +57,13 @@ public class IntakeIOMotors implements IntakeIO {
   }
 
   @Override
-  public void setOpenLoop(double speed) {
+  public void setOpenLoopSlapDown(double speed) {
     intakeSlapDownMotor.set(speed);
+  }
+
+  @Override
+  public void setOpenLoopWheels(double speed) {
+    intakeMotor.set(speed);
   }
 
   @Override

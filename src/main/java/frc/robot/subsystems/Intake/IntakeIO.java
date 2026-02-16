@@ -18,7 +18,9 @@ public interface IntakeIO {
 
   public default void updateInputs(IntakeIOInputs inputs) {}
 
-  public default void setOpenLoop(double speed) {}
+  public default void setOpenLoopWheels(double speed) {}
+
+  public default void setOpenLoopSlapDown(double speed) {}
 
   public default void setPosition(Angle angle) {}
 }
