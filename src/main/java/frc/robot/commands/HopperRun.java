@@ -17,7 +17,7 @@ public class HopperRun extends Command {
 
   @Override
   public void execute() {
-    m_Hopper.setMotor(0.25);
+    m_Hopper.setMotor(-0.25);
   }
 
   @Override

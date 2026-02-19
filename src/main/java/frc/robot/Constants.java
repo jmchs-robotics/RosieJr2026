@@ -33,7 +33,7 @@ public final class Constants {
 
     public static final int IntakeMotorID = 12;
 
-    public static final double kP = 10;
+    public static final double kP = 1;
     public static final double kI = 1;
     public static final double kD = 0.1;
   }

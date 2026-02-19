@@ -42,7 +42,7 @@ public class RobotContainer {
   private final Drive drive;
   private final Intake intake;
   private final Hopper hopper;
-  
+
   private final CommandXboxController driveController = new CommandXboxController(0);
   private final LoggedDashboardChooser<Command> autoChooser;
 
@@ -195,14 +195,11 @@ public class RobotContainer {
 
     driveController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    driveController.y().whileTrue(Commands.parallel(
-      new IntakeRun(intake),
-      new HopperRun(hopper)
-    ));
+    driveController.y().whileTrue(Commands.parallel(new IntakeRun(intake), new HopperRun(hopper)));
 
     driveController.rightBumper().whileTrue(new HopperRun(hopper));
 
-    driveController.povDown().onTrue(new SlapDown(intake));
+    driveController.povDown().whileTrue(new SlapDown(intake));
 
     // driveController
     //     .b()

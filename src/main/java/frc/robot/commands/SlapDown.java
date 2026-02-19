@@ -20,7 +20,7 @@ public class SlapDown extends Command {
 
   @Override
   public void execute() {
-    m_slapDown.setPosition(Radians.of(1));
+    m_slapDown.setPosition(Radians.of(30));
   }
 
   @Override
