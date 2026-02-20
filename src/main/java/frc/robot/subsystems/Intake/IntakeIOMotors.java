@@ -8,7 +8,6 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
-import frc.robot.Constants.IntakeConstants;
 
 public class IntakeIOMotors implements IntakeIO {
 
@@ -30,10 +29,6 @@ public class IntakeIOMotors implements IntakeIO {
     intakeMotor = new SparkFlex(10, MotorType.kBrushless);
 
     config = new TalonFXConfiguration();
-
-    config.Slot0.kP = IntakeConstants.kP;
-    config.Slot0.kI = IntakeConstants.kI;
-    config.Slot0.kD = IntakeConstants.kD;
 
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     config.CurrentLimits.SupplyCurrentLimit = 40;

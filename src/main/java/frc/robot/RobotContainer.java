@@ -199,7 +199,9 @@ public class RobotContainer {
 
     driveController.rightBumper().whileTrue(new HopperRun(hopper));
 
-    driveController.povDown().whileTrue(new SlapDown(intake));
+    driveController
+        .povDown()
+        .onTrue(Commands.race(Commands.waitSeconds(0.75), new SlapDown(intake)));
 
     // driveController
     //     .b()
