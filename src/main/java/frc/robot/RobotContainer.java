@@ -185,7 +185,7 @@ public class RobotContainer {
     //             drive));
 
     driveController
-        .a()
+        .rightStick()
         .whileTrue(
             DriveCommands.joystickDriveAtAngle(
                 drive,
@@ -193,7 +193,7 @@ public class RobotContainer {
                 () -> -driveController.getLeftX(),
                 () -> Rotation2d.kZero));
 
-    driveController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    driveController.rightStick().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     driveController.y().whileTrue(Commands.parallel(new IntakeRun(intake), new HopperRun(hopper)));
 
