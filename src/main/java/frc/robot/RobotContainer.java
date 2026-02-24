@@ -11,7 +11,6 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -180,31 +179,14 @@ public class RobotContainer {
                     })
                 .ignoringDisable(true));
 
-    // Auto aim command example
-    @SuppressWarnings("resource")
-    PIDController aimController = new PIDController(0.2, 0.0, 0.0);
-    aimController.enableContinuousInput(-Math.PI, Math.PI);
-    controller
-        .a()
-        .whileTrue(
-            Commands.startRun(
-                () -> {
-                  aimController.reset();
-                },
-                () -> {
-                  DriveCommands.autoAim(
-                      drive, () -> aimController.calculate(vision.getTargetX(0).getRadians()));
-                },
-                drive));
-
-    driveController
-        .a()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -driveController.getLeftY(),
-                () -> -driveController.getLeftX(),
-                () -> Rotation2d.kZero));
+    // driveController
+    //     .a()
+    //     .whileTrue(
+    //         DriveCommands.joystickDriveAtAngle(
+    //             drive,
+    //             () -> -driveController.getLeftY(),
+    //             () -> -driveController.getLeftX(),
+    //             () -> Rotation2d.kZero));
 
     driveController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
@@ -218,7 +200,7 @@ public class RobotContainer {
     //                 drive)
     //             .ignoringDisable(true));
     // Shooter button binding
-    controller.y().whileTrue(new ShooterRun(shooter));
+    driveController.rightTrigger().whileTrue(new ShooterRun(shooter));
   }
 
   /**
