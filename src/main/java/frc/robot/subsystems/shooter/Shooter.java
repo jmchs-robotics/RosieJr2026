@@ -43,7 +43,8 @@ public class Shooter extends SubsystemBase {
                 * Math.cos(ShooterConstants.shooterTheta)
                 * Math.sqrt((2 * ShooterConstants.arcToHub / ShooterConstants.gravity)));
 
-    double motorSpeed = 0.65;
+    double motorSpeed =
+        (2.42 * Math.pow(10, -3) * (Math.pow(velocity, 2))) + (-0.127 * velocity) + 2.27;
     return motorSpeed;
   }
 }
