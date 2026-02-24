@@ -10,19 +10,18 @@ package frc.robot;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.HopperRun;
 import frc.robot.commands.IntakeRun;
+import frc.robot.commands.IntakeUp;
 import frc.robot.commands.SlapDown;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.intake.*;
@@ -44,9 +43,10 @@ public class RobotContainer {
   private final Hopper hopper;
 
   private final CommandXboxController driveController = new CommandXboxController(0);
+  private final CommandXboxController operatorController = new CommandXboxController(1);
   private final LoggedDashboardChooser<Command> autoChooser;
 
-  private final CommandGenericHID keyboard = new CommandGenericHID(1); // Keyboard 0 on port 0
+  // private final CommandGenericHID keyboard = new CommandGenericHID(1); // Keyboard 0 on port 0
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -168,21 +168,21 @@ public class RobotContainer {
                 .ignoringDisable(true));
 
     // Auto aim command example
-    @SuppressWarnings("resource")
-    PIDController aimController = new PIDController(0.2, 0.0, 0.0);
-    aimController.enableContinuousInput(-Math.PI, Math.PI);
-    keyboard
-        .button(1)
-        .whileTrue(
-            Commands.startRun(
-                () -> {
-                  aimController.reset();
-                },
-                () -> {
-                  DriveCommands.autoAim(
-                      drive, () -> aimController.calculate(vision.getTargetX(0).getRadians()));
-                },
-                drive));
+    // @SuppressWarnings("resource")
+    // PIDController aimController = new PIDController(0.2, 0.0, 0.0);
+    // aimController.enableContinuousInput(-Math.PI, Math.PI);
+    // keyboard
+    //     .button(1)
+    //     .whileTrue(
+    //         Commands.startRun(
+    //             () -> {
+    //               aimController.reset();
+    //             },
+    //             () -> {
+    //               DriveCommands.autoAim(
+    //                   drive, () -> aimController.calculate(vision.getTargetX(0).getRadians()));
+    //             },
+    //             drive));
 
     driveController
         .a()
@@ -197,11 +197,13 @@ public class RobotContainer {
 
     driveController.y().whileTrue(Commands.parallel(new IntakeRun(intake), new HopperRun(hopper)));
 
-    driveController.rightBumper().whileTrue(new HopperRun(hopper));
+    operatorController.rightBumper().whileTrue(new HopperRun(hopper));
 
-    driveController
+    operatorController
         .povDown()
         .onTrue(Commands.race(Commands.waitSeconds(0.75), new SlapDown(intake)));
+
+    operatorController.povUp().onTrue(new IntakeUp(intake));
 
     // driveController
     //     .b()

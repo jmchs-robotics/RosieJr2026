@@ -31,4 +31,8 @@ public class Intake extends SubsystemBase {
   public void setPosition(Angle angle) {
     io.setPosition(angle);
   }
+
+  public double getPosition() {
+    return io.getPosition();
+  }
 }

@@ -65,4 +65,9 @@ public class IntakeIOMotors implements IntakeIO {
   public void setPosition(Angle angle) {
     intakeSlapDownMotor.setControl(new PositionVoltage(angle.in(Units.Rotations)));
   }
+
+  @Override
+  public double getPosition() {
+    return intakeSlapDownMotor.getPosition().getValueAsDouble();
+  }
 }

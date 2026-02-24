@@ -23,4 +23,6 @@ public interface IntakeIO {
   public default void setOpenLoopSlapDown(double speed) {}
 
   public default void setPosition(Angle angle) {}
+
+  public default double getPosition() {return 0;}
 }

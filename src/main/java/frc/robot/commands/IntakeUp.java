@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import static edu.wpi.first.units.Units.Rotations;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.intake.Intake;
 
@@ -14,11 +16,16 @@ public class IntakeUp extends Command {
   }
 
   @Override
-  public void initialize() {}
+  public void initialize() {
+    m_IntakeUp.setPosition(Rotations.of(0));
+  }
 
   @Override
-  public void execute() {
-    m_IntakeUp.setSlapDownMotor(-0.15);
+  public void execute() {}
+
+  @Override
+  public boolean isFinished() {
+    return (m_IntakeUp.getPosition() < 0.5);
   }
 
   @Override
