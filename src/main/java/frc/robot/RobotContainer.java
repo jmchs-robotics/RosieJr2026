@@ -46,7 +46,7 @@ public class RobotContainer {
   private SwerveDriveSimulation driveSimulation = null;
 
   private final CommandGenericHID keyboard = new CommandGenericHID(1); // Keyboard 0 on port 0
-  private final Shooter shooter;
+  private final Shoot shooter;
   // private final CommandGenericHID keyboard = new CommandGenericHID(0); // Keyboard 0 on port 0
   private final CommandXboxController controller = new CommandXboxController(0);
 
@@ -149,7 +149,7 @@ public class RobotContainer {
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
     // Configure the button bindings
 
-    shooter = new Shooter(new ShooterIOTalonFX(), drive);
+    shooter = new Shoot(new ShootIOTalonFX(), drive);
 
     configureButtonBindings();
   }

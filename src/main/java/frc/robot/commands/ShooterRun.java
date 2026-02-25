@@ -1,14 +1,14 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.Shoot;
 
 public class ShooterRun extends Command {
 
-  private final Shooter m_shooter;
+  private final Shoot m_shooter;
   double motorSpeed = 0;
 
-  public ShooterRun(Shooter shooter) {
+  public ShooterRun(Shoot shooter) {
     m_shooter = shooter;
     addRequirements(m_shooter);
   }

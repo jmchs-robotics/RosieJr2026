@@ -5,14 +5,14 @@ import frc.robot.Constants;
 import frc.robot.subsystems.drive.Drive;
 import org.littletonrobotics.junction.Logger;
 
-public class Shooter extends SubsystemBase {
+public class Shoot extends SubsystemBase {
 
-  private final ShooterIO io;
+  private final ShootIO io;
   private final Drive drive;
 
   private final ShooterIOInputsAutoLogged inputs;
 
-  public Shooter(ShooterIO io, Drive drive) {
+  public Shoot(ShootIO io, Drive drive) {
     this.io = io;
     this.drive = drive;
     inputs = new ShooterIOInputsAutoLogged();
