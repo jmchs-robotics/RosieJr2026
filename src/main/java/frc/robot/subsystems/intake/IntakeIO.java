@@ -24,5 +24,7 @@ public interface IntakeIO {
 
   public default void setPosition(Angle angle) {}
 
-  public default double getPosition() {return 0;}
+  public default double getPosition() {
+    return 0;
+  }
 }
