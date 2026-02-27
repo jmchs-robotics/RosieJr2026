@@ -18,6 +18,8 @@ public class HoodIOTalonFX implements HoodIO {
 
     config.Slot0.kP = 1;
     config.Slot0.kD = 0;
+
+    hoodMotor.getConfigurator().apply(config);
   }
 
   @Override
@@ -26,7 +28,6 @@ public class HoodIOTalonFX implements HoodIO {
     inputs.hoodAppliedVolts = hoodMotor.getSupplyVoltage().getValueAsDouble();
     inputs.hoodCurrentAmps = hoodMotor.getSupplyCurrent().getValueAsDouble();
     inputs.hoodVelocityRotPerSec = hoodMotor.getRotorVelocity().getValueAsDouble();
-    
   }
 
   @Override

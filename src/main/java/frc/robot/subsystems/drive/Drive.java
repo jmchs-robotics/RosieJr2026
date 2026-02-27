@@ -54,6 +54,8 @@ public class Drive extends SubsystemBase {
   private final Alert gyroDisconnectedAlert =
       new Alert("Disconnected gyro, using kinematics as fallback.", AlertType.kError);
 
+  private ChassisSpeeds robotSetPointVelocity = new ChassisSpeeds();
+
   private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(moduleTranslations);
   private Rotation2d rawGyroRotation = Rotation2d.kZero;
   private SwerveModulePosition[] lastModulePositions = // For delta tracking
@@ -318,6 +320,18 @@ public class Drive extends SubsystemBase {
   /** Returns the maximum angular speed in radians per sec. */
   public double getMaxAngularSpeedRadPerSec() {
     return maxSpeedMetersPerSec / driveBaseRadius;
+  }
+
+  public ChassisSpeeds getRobotSetpointVelocity() {
+    return robotSetPointVelocity;
+  }
+
+  public void setRobotSetPointVelocity(ChassisSpeeds speeds) {
+    robotSetPointVelocity = speeds;
+  }
+
+  public ChassisSpeeds getFieldVelocity() {
+    return ChassisSpeeds.fromFieldRelativeSpeeds(robotSetPointVelocity, getRotation());
   }
 
   public void zeroHeading() {

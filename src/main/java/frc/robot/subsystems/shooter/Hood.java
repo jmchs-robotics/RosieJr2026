@@ -26,5 +26,4 @@ public class Hood extends SubsystemBase {
   public double getCurrentPosition() {
     return io.getHoodPosition();
   }
-
 }

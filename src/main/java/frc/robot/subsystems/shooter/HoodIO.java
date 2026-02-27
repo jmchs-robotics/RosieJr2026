@@ -11,13 +11,13 @@ public interface HoodIO {
     public double hoodCurrentAmps = 0.0;
     public double hoodAppliedVolts = 0.0;
     public double hoodVelocityRotPerSec = 0.0;
-    
   }
 
   public default void updateInputs(HoodIOInputs inputs) {}
 
   public default void setHoodPosition(Angle angle) {}
 
-  public default double getHoodPosition() {return 0;}
-
+  public default double getHoodPosition() {
+    return 0;
+  }
 }
