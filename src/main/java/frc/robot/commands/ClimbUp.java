@@ -6,7 +6,7 @@ import frc.robot.subsystems.climb.Climb;
 public class ClimbUp extends Command {
 
   private final Climb m_climb;
-  double motorSpeed = 0;
+  private double motorSpeed = 0;
 
   public ClimbUp(Climb climb) {
     m_climb = climb;
@@ -16,7 +16,7 @@ public class ClimbUp extends Command {
   @Override
   public void execute() {
     // TODO replace this with a real value
-    motorSpeed = 3.0;
+    motorSpeed = 0.3;
     m_climb.setMotor(motorSpeed);
   }
 

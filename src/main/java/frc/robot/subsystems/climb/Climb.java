@@ -8,7 +8,7 @@ public class Climb extends SubsystemBase {
 
   private final ClimbIOInputsAutoLogged inputs;
 
-  public void climb(ClimbIO io) {
+  public Climb (ClimbIO io) {
     this.io = io;
     inputs = new ClimbIOInputsAutoLogged();
   }

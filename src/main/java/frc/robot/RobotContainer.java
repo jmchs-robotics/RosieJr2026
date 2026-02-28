@@ -121,10 +121,11 @@ public class RobotContainer {
                 (pose) -> {});
 
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
-        climb = new Climb();
 
         break;
     }
+
+    climb = new Climb(new ClimbIO() {});
 
     // Set up auto routines
 
