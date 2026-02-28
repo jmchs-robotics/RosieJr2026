@@ -208,6 +208,8 @@ public class RobotContainer {
 
     driveController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
+    driveController.povDown().whileTrue(new DriveToPose(drive, driveController));
+
     // driveController
     //     .b()
     //     .onTrue(
