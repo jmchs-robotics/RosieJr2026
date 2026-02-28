@@ -22,8 +22,10 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.commands.ClimbUp;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.DriveToPose;
+import frc.robot.subsystems.climb.*;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.vision.*;
 import org.ironmaple.simulation.SimulatedArena;
@@ -43,6 +45,7 @@ public class RobotContainer {
   private final CommandXboxController driveController = new CommandXboxController(0);
   private final Drive drive;
   private final LoggedDashboardChooser<Command> autoChooser;
+  private final Climb climb;
 
   private SwerveDriveSimulation driveSimulation = null;
 
@@ -118,6 +121,7 @@ public class RobotContainer {
                 (pose) -> {});
 
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
+        climb = new Climb();
 
         break;
     }
@@ -202,6 +206,8 @@ public class RobotContainer {
                 () -> Rotation2d.kZero));
 
     driveController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+
+    driveController.leftTrigger().whileTrue(new ClimbUp(climb));
 
     driveController.povDown().whileTrue(new DriveToPose(drive, driveController));
 
