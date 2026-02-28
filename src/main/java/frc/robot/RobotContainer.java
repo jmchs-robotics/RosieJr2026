@@ -11,6 +11,7 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -62,11 +63,9 @@ public class RobotContainer {
         //         drive::addVisionMeasurement,
         //         new VisionIOLimelight(camera1, drive::getRotation),
         //         new VisionIOLimelight(camera1Name, drive::getRotation));
-        vision =
-            new Vision(
-                drive::addVisionMeasurement,
-                new VisionIOPhotonVision(bulldogCam1, robotToCamera1),
-                new VisionIOPhotonVision(bulldogCam2, robotToCamera2));
+        vision = new Vision(drive::addVisionMeasurement);
+        // new VisionIOPhotonVision(bulldogCam1, robotToCamera1),
+        // new VisionIOPhotonVision(bulldogCam2, robotToCamera2));
         break;
 
       case SIM:
@@ -183,6 +182,11 @@ public class RobotContainer {
                 () -> -driveController.getLeftY(),
                 () -> -driveController.getLeftX(),
                 () -> Rotation2d.kZero));
+
+    driveController
+        .y()
+        .onTrue(
+            new InstantCommand(() -> drive.setPose(new Pose2d(0.058, 4.034, new Rotation2d()))));
 
     driveController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 

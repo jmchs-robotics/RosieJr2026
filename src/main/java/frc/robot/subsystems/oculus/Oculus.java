@@ -1,6 +1,7 @@
 package frc.robot.subsystems.oculus;
 
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.drive.Drive;
 import gg.questnav.questnav.PoseFrame;
@@ -16,7 +17,12 @@ public class Oculus extends SubsystemBase {
 
     questNav = new QuestNav();
     m_drive = drive;
-    questPose = new Pose3d(drive.getPose()).transformBy(OculusConstants.ROBOT_TO_QUEST);
+    questPose =
+        new Pose3d(drive.getPose())
+            .transformBy(OculusConstants.ROBOT_TO_QUEST)
+            .rotateBy(new Rotation3d(Math.PI / 2, 0, Math.PI));
+
+    // questNav.setPose(new Pose3d(0.058, 4.034, 0, new Rotation3d(Math.PI / 2, 0, Math.PI)));
   }
 
   @Override
