@@ -35,13 +35,13 @@ public class Shoot extends SubsystemBase {
 
     // Aiden's magic equation
     double velocity =
-        (shooterToHub * Math.sin(ShooterConstants.shooterTheta)
+        (shooterToHub * Math.sin(ShootConstants.shooterTheta)
                 - (2
-                    * Math.cos(ShooterConstants.shooterTheta)
-                    * (ShooterConstants.ShooterToHubdeltaZ + ShooterConstants.arcToHub)))
-            / (Math.sin(ShooterConstants.shooterTheta)
-                * Math.cos(ShooterConstants.shooterTheta)
-                * Math.sqrt((2 * ShooterConstants.arcToHub / ShooterConstants.gravity)));
+                    * Math.cos(ShootConstants.shooterTheta)
+                    * (ShootConstants.ShooterToHubdeltaZ + ShootConstants.arcToHub)))
+            / (Math.sin(ShootConstants.shooterTheta)
+                * Math.cos(ShootConstants.shooterTheta)
+                * Math.sqrt((2 * ShootConstants.arcToHub / ShootConstants.gravity)));
 
     double motorSpeed =
         (2.42 * Math.pow(10, -3) * (Math.pow(velocity, 2))) + (-0.127 * velocity) + 2.27;

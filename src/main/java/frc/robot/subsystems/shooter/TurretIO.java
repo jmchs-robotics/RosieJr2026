@@ -1,5 +1,6 @@
 package frc.robot.subsystems.shooter;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface TurretIO {
@@ -14,7 +15,11 @@ public interface TurretIO {
 
   public default void updateInputs(TurretIOInputs inputs) {}
 
-  public default double getTurretPosition() {
+  public default Rotation2d getPosition() {
+    return new Rotation2d();
+  }
+
+  public default double getTurretPositionAsDouble() {
     return 0;
   }
 }

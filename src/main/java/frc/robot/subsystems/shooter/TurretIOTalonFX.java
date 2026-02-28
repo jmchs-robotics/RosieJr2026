@@ -2,13 +2,13 @@ package frc.robot.subsystems.shooter;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 
 public class TurretIOTalonFX implements TurretIO {
 
   private final TalonFX turretMotor;
   private final TalonFXConfiguration config;
-
-  private double turretOffset = 0;
 
   public TurretIOTalonFX() {
 
@@ -30,7 +30,12 @@ public class TurretIOTalonFX implements TurretIO {
   }
 
   @Override
-  public double getTurretPosition() {
-    return turretMotor.getPosition().getValueAsDouble() + turretOffset;
+  public Rotation2d getPosition() {
+    return new Rotation2d(Units.rotationsToRadians(getTurretPositionAsDouble()));
+  }
+
+  @Override
+  public double getTurretPositionAsDouble() {
+    return turretMotor.getPosition().getValueAsDouble();
   }
 }

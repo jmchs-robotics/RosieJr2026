@@ -31,6 +31,11 @@ public class HoodIOTalonFX implements HoodIO {
   }
 
   @Override
+  public void setOpenLoop(double speed) {
+    hoodMotor.set(speed);
+  }
+
+  @Override
   public void setHoodPosition(Angle angle) {
     hoodMotor.setControl(new PositionVoltage(angle.in(Units.Rotations)));
   }

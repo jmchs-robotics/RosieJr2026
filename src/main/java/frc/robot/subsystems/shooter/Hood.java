@@ -19,6 +19,10 @@ public class Hood extends SubsystemBase {
     io.updateInputs(inputs);
   }
 
+  public void setSpeed(double speed) {
+    io.setOpenLoop(speed);
+  }
+
   public void setPosition(Angle angle) {
     io.setHoodPosition(angle);
   }

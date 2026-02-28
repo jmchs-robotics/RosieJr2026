@@ -1,9 +1,7 @@
 package frc.robot.subsystems.shooter;
 
-import org.littletonrobotics.junction.AutoLogOutput;
-import org.littletonrobotics.junction.Logger;
-
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
@@ -13,6 +11,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.util.LoggedTunableNumber;
+import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
 
 public class Turret extends SubsystemBase {
 
@@ -20,9 +20,10 @@ public class Turret extends SubsystemBase {
   private final Drive drive;
   private final TurretIOInputsAutoLogged inputs = new TurretIOInputsAutoLogged();
 
-  private Rotation2d target = new Rotation2d();
+  private Rotation2d goalAngle = new Rotation2d();
   private double lastTarget = 0;
   private double goalVelocity = 0;
+  private double robotRelativeGoalVelocity = 0;
   private double turretOffset = 0;
   private static final double minAngle = Units.degreesToRadians(-210.0);
   private static final double maxAngle = Units.degreesToRadians(210.0);
@@ -72,16 +73,16 @@ public class Turret extends SubsystemBase {
     }
 
     if (DriverStation.isDisabled()) {
-      setPoint = new State(io.getTurretPosition(), 0.0);
-      lastTarget = getTurretPosition();
+      setPoint = new State(io.getTurretPositionAsDouble(), 0.0);
+      lastTarget = io.getTurretPositionAsDouble();
     }
 
     if (turretZeroed) {
       Rotation2d robotAngle = drive.getRotation();
       double robotAngularVelocity = drive.getFieldVelocity().omegaRadiansPerSecond;
 
-      Rotation2d robotRelativeGoalAngle = target.minus(robotAngle);
-      double robotRelativeGoalVelocity = goalVelocity - robotAngularVelocity;
+      Rotation2d robotRelativeGoalAngle = goalAngle.minus(robotAngle);
+      robotRelativeGoalVelocity = goalVelocity - robotAngularVelocity;
 
       boolean hasBestAngle = false;
       double bestAngle = 0;
@@ -116,7 +117,7 @@ public class Turret extends SubsystemBase {
 
   public void setTarget(Rotation2d angle, double velocity) {
 
-    target = angle;
+    goalAngle = angle;
     goalVelocity = velocity;
   }
 
@@ -125,15 +126,26 @@ public class Turret extends SubsystemBase {
   }
 
   public void zeroTurret() {
-    turretOffset = -io.getTurretPosition();
+    turretOffset = -io.getTurretPositionAsDouble();
     turretZeroed = true;
   }
 
-  public double getTurretPosition() {
-    return io.getTurretPosition() + turretOffset;
+  public double getPosition() {
+    return io.getTurretPositionAsDouble() + turretOffset;
+  }
+
+  public double getVelocity() {
+    return robotRelativeGoalVelocity;
   }
 
   public boolean getAtGoal() {
     return atGoal;
+  }
+
+  public Pose2d getPose() {
+    Pose2d currentPose =
+        new Pose2d(
+            drive.getPose().getTranslation().plus(ShootConstants.turretToRobot), io.getPosition());
+    return currentPose;
   }
 }

@@ -15,6 +15,8 @@ public interface HoodIO {
 
   public default void updateInputs(HoodIOInputs inputs) {}
 
+  public default void setOpenLoop(double speed) {}
+
   public default void setHoodPosition(Angle angle) {}
 
   public default double getHoodPosition() {

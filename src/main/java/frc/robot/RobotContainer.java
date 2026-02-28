@@ -44,11 +44,10 @@ public class RobotContainer {
   private final LoggedDashboardChooser<Command> autoChooser;
 
   private SwerveDriveSimulation driveSimulation = null;
-
-  private final CommandGenericHID keyboard = new CommandGenericHID(1); // Keyboard 0 on port 0
-  private final Shoot shooter;
-  // private final CommandGenericHID keyboard = new CommandGenericHID(0); // Keyboard 0 on port 0
-  private final CommandXboxController controller = new CommandXboxController(0);
+  
+  private final Shoot shoot;
+  private final Hood hood;
+  private final Turret turret;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -149,7 +148,9 @@ public class RobotContainer {
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
     // Configure the button bindings
 
-    shooter = new Shoot(new ShootIOTalonFX(), drive);
+    shoot = new Shoot(new ShootIOTalonFX(), drive);
+    hood = new Hood(new HoodIOTalonFX());
+    turret = new Turret(new TurretIOTalonFX(), drive);
 
     configureButtonBindings();
   }
@@ -200,7 +201,11 @@ public class RobotContainer {
     //                 drive)
     //             .ignoringDisable(true));
     // Shooter button binding
-    driveController.rightTrigger().whileTrue(new ShooterRun(shooter));
+    driveController
+        .rightTrigger()
+        .whileTrue(
+            Commands.parallel(
+                new AdjustHood(hood), new ShooterRun(shoot), new TurretCommand(turret)));
   }
 
   /**
