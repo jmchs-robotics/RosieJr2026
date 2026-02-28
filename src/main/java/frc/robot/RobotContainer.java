@@ -19,25 +19,21 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.*;
+import frc.robot.commands.ShooterRun;
 import frc.robot.subsystems.drive.*;
+import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.ShooterIOTalonFX;
 import frc.robot.subsystems.vision.*;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionIO;
+import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.ShooterRun;
-import frc.robot.subsystems.drive.DemoDrive;
-import frc.robot.subsystems.shooter.Shooter;
-import frc.robot.subsystems.shooter.ShooterIOTalonFX;
-import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.vision.VisionIO;
-import frc.robot.subsystems.vision.VisionIOLimelight;
-import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -50,15 +46,10 @@ public class RobotContainer {
   private final Vision vision;
   private final CommandXboxController driveController = new CommandXboxController(0);
   private final Drive drive;
+  private final Shooter shooter;
   private final LoggedDashboardChooser<Command> autoChooser;
 
   private SwerveDriveSimulation driveSimulation = null;
-
-  private final CommandGenericHID keyboard = new CommandGenericHID(1); // Keyboard 0 on port 0
-  private final Shooter shooter = new Shooter(new ShooterIOTalonFX());
-  private final DemoDrive drive = new DemoDrive(); // Demo drive subsystem, sim only
-  // private final CommandGenericHID keyboard = new CommandGenericHID(0); // Keyboard 0 on port 0
-  private final CommandXboxController controller = new CommandXboxController(0);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -134,6 +125,8 @@ public class RobotContainer {
         break;
     }
 
+    shooter = new Shooter(new ShooterIOTalonFX(), drive);
+
     // Set up auto routines
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -191,18 +184,18 @@ public class RobotContainer {
     @SuppressWarnings("resource")
     PIDController aimController = new PIDController(0.2, 0.0, 0.0);
     aimController.enableContinuousInput(-Math.PI, Math.PI);
-    controller
-        .a()
-        .whileTrue(
-            Commands.startRun(
-                () -> {
-                  aimController.reset();
-                },
-                () -> {
-                  DriveCommands.autoAim(
-                      drive, () -> aimController.calculate(vision.getTargetX(0).getRadians()));
-                },
-                drive));
+    // controller
+    //     .a()
+    //     .whileTrue(
+    //         Commands.startRun(
+    //             () -> {
+    //               aimController.reset();
+    //             },
+    //             () -> {
+    //               DriveCommands.autoAim(
+    //                   drive, () -> aimController.calculate(vision.getTargetX(0).getRadians()));
+    //             },
+    //             drive));
 
     driveController
         .a()
@@ -227,7 +220,7 @@ public class RobotContainer {
     //                 drive)
     //             .ignoringDisable(true));
     // Shooter button binding
-    controller.x().whileTrue(new ShooterRun(shooter));
+    driveController.x().whileTrue(new ShooterRun(shooter));
   }
 
   /**
