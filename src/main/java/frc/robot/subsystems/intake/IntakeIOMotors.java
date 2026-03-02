@@ -28,8 +28,6 @@ public class IntakeIOMotors implements IntakeIO {
 
     intakeMotor = new SparkFlex(10, MotorType.kBrushless);
 
-    config = new TalonFXConfiguration();
-
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     config.CurrentLimits.SupplyCurrentLimit = 40;
 
