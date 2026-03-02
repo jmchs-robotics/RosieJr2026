@@ -71,11 +71,9 @@ public class RobotContainer {
         //         drive::addVisionMeasurement,
         //         new VisionIOLimelight(camera1, drive::getRotation),
         //         new VisionIOLimelight(camera1Name, drive::getRotation));
-        vision =
-            new Vision(
-                drive::addVisionMeasurement,
-                new VisionIOPhotonVision(bulldogCam1, robotToCamera1),
-                new VisionIOPhotonVision(bulldogCam2, robotToCamera2));
+        vision = new Vision(drive::addVisionMeasurement);
+        // new VisionIOPhotonVision(bulldogCam1, robotToCamera1),
+        // new VisionIOPhotonVision(bulldogCam2, robotToCamera2));
         break;
 
       case SIM:
@@ -96,13 +94,11 @@ public class RobotContainer {
                 new ModuleIOSim(driveSimulation.getModules()[3]),
                 driveSimulation::setSimulationWorldPose);
 
-        vision =
-            new Vision(
-                drive::addVisionMeasurement,
-                new VisionIOPhotonVisionSim(
-                    bulldogCam1, robotToCamera1, driveSimulation::getSimulatedDriveTrainPose),
-                new VisionIOPhotonVisionSim(
-                    bulldogCam2, robotToCamera2, driveSimulation::getSimulatedDriveTrainPose));
+        vision = new Vision(drive::addVisionMeasurement);
+        // new VisionIOPhotonVisionSim(
+        //     bulldogCam1, robotToCamera1, driveSimulation::getSimulatedDriveTrainPose),
+        // new VisionIOPhotonVisionSim(
+        //     bulldogCam2, robotToCamera2, driveSimulation::getSimulatedDriveTrainPose));
         break;
 
       default:
@@ -123,6 +119,8 @@ public class RobotContainer {
 
         break;
     }
+
+    drive.setPose(new Pose2d(1.582, 4.034, new Rotation2d(0)));
 
     // Set up auto routines
 
@@ -189,6 +187,10 @@ public class RobotContainer {
     //             () -> Rotation2d.kZero));
 
     driveController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    driveController
+        .y()
+        .onTrue(
+            new InstantCommand(() -> drive.setPose(new Pose2d(1.582, 4.034, new Rotation2d(0)))));
 
     // driveController
     //     .b()

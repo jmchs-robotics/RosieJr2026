@@ -1,6 +1,7 @@
 package frc.robot.subsystems.shooter;
 
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 public class ShooterIOTalonFX implements ShooterIO {
 
@@ -9,6 +10,7 @@ public class ShooterIOTalonFX implements ShooterIO {
   public ShooterIOTalonFX() {
 
     shooterMotor = new TalonFX(9);
+    shooterMotor.setNeutralMode(NeutralModeValue.Coast);
   }
 
   @Override
