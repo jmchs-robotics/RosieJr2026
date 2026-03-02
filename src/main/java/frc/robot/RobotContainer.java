@@ -199,9 +199,7 @@ public class RobotContainer {
 
     operatorController.rightBumper().whileTrue(new HopperRun(hopper));
 
-    operatorController
-        .povDown()
-        .onTrue(Commands.race(Commands.waitSeconds(0.75), new SlapDown(intake)));
+    operatorController.povDown().onTrue(new SlapDown(intake));
 
     operatorController.povUp().onTrue(new IntakeUp(intake));
 
