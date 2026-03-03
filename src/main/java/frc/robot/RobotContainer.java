@@ -11,32 +11,27 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.*;
+import frc.robot.subsystems.LEDS;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.vision.*;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionIO;
+import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-// import frc.robot.commands.ShooterRun;
-// import frc.robot.subsystems.shooter.Shooter;
-import frc.robot.subsystems.shooter.ShooterIOTalonFX;
-import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.vision.VisionIO;
-import frc.robot.subsystems.vision.VisionIOLimelight;
-import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -53,13 +48,10 @@ public class RobotContainer {
 
   private SwerveDriveSimulation driveSimulation = null;
 
-  private final CommandGenericHID keyboard = new CommandGenericHID(1); // Keyboard 0 on port 0
-  // private final Shooter shooter = new Shooter(new ShooterIOTalonFX());
-  // private final CommandGenericHID keyboard = new CommandGenericHID(0); // Keyboard 0 on port 0
-  private final CommandXboxController controller = new CommandXboxController(0);
-
+  private final LEDS leds;
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    leds = new LEDS(new AddressableLED(0));
     switch (Constants.currentMode) {
       case REAL:
 
@@ -176,6 +168,8 @@ public class RobotContainer {
             () -> -driveController.getLeftX(),
             () -> -driveController.getRightX()));
 
+    leds.setDefaultCommand(new DefaultLEDCommand(leds));
+
     driveController
         .start()
         .onTrue(
@@ -186,21 +180,21 @@ public class RobotContainer {
                 .ignoringDisable(true));
 
     // Auto aim command example
-    @SuppressWarnings("resource")
-    PIDController aimController = new PIDController(0.2, 0.0, 0.0);
-    aimController.enableContinuousInput(-Math.PI, Math.PI);
-    controller
-        .a()
-        .whileTrue(
-            Commands.startRun(
-                () -> {
-                  aimController.reset();
-                },
-                () -> {
-                  DriveCommands.autoAim(
-                      drive, () -> aimController.calculate(vision.getTargetX(0).getRadians()));
-                },
-                drive));
+    // @SuppressWarnings("resource")
+    // PIDController aimController = new PIDController(0.2, 0.0, 0.0);
+    // aimController.enableContinuousInput(-Math.PI, Math.PI);
+    // controller
+    //     .a()
+    //     .whileTrue(
+    //         Commands.startRun(
+    //             () -> {
+    //               aimController.reset();
+    //             },
+    //             () -> {
+    //               DriveCommands.autoAim(
+    //                   drive, () -> aimController.calculate(vision.getTargetX(0).getRadians()));
+    //             },
+    //             drive));
 
     driveController
         .a()
