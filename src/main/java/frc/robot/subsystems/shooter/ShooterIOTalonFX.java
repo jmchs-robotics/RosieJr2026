@@ -1,13 +1,17 @@
 package frc.robot.subsystems.shooter;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
+
 import frc.robot.util.LoggedTunableNumber;
 
 public class ShooterIOTalonFX implements ShooterIO {
 
   private final TalonFX shooterMotor;
+  private final TalonFX shooterFollower;
   private static final LoggedTunableNumber kP = new LoggedTunableNumber("shooter kP");
 
   static {
@@ -17,6 +21,9 @@ public class ShooterIOTalonFX implements ShooterIO {
   public ShooterIOTalonFX() {
 
     shooterMotor = new TalonFX(9);
+    shooterFollower = new TalonFX(15);
+
+    shooterFollower.setControl(new Follower(9, MotorAlignmentValue.Aligned));
   }
 
   @Override
@@ -29,7 +36,7 @@ public class ShooterIOTalonFX implements ShooterIO {
   }
 
   @Override
-  public void setOpenLoop(double speed) {
+  public void setVelocity(double speed) {
     // shooterMotor.set(-speed);
     shooterMotor.setControl(new VelocityVoltage(speed));
   }
