@@ -19,6 +19,15 @@ import edu.wpi.first.wpilibj.RobotBase;
 public final class Constants {
   public static final Mode simMode = Mode.SIM;
   public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
+  public static final boolean tuningMode = true;
+  public static final double loopPeriodSecs = 0.02;
+
+  public static boolean disableHAL = false;
+
+  public void disableHAL() {
+    disableHAL = true;
+  }
+
   public static final Translation2d hubPose =
       new Translation2d(Units.inchesToMeters(182.11), Units.inchesToMeters(158.84));
 

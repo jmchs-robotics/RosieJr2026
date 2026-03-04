@@ -24,7 +24,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public void setMotor(double speed) {
-    io.setOpenLoop(speed);
+    io.setVelocity(speed);
     Logger.processInputs("Shooter", inputs);
   }
 
@@ -33,26 +33,18 @@ public class Shooter extends SubsystemBase {
         Constants.hubPose.getDistance(
             drive.getPose().getTranslation()); // distance between shooter and hub
 
-    // Aiden's magic equation
     double velocity =
-        (shooterToHub * Math.sin(ShooterConstants.shooterTheta)
-                + (2
-                    * Math.cos(ShooterConstants.shooterTheta)
-                    * (ShooterConstants.ShooterToHubdeltaZ + ShooterConstants.arcToHub)))
-            / (Math.sin(ShooterConstants.shooterTheta)
-                * Math.cos(ShooterConstants.shooterTheta)
-                * Math.sqrt((2 * ShooterConstants.arcToHub / ShooterConstants.gravity)));
+        -((6.17 * (Math.pow(10, -3) * Math.pow(shooterToHub, 2))) + (-1.16 * shooterToHub) + 103);
+    // (shooterToHub * Math.sin(ShooterConstants.shooterTheta)
+    //         - (2
+    //             * Math.cos(ShooterConstants.shooterTheta)
+    //             * (ShooterConstants.ShooterToHubdeltaZ + ShooterConstants.arcToHub)))
+    //     / (Math.sin(ShooterConstants.shooterTheta)
+    //         * Math.cos(ShooterConstants.shooterTheta)
+    //         * Math.sqrt((2 * ShooterConstants.arcToHub / ShooterConstants.gravity)));
 
     // double motorSpeed =
-    //     ((1.36 * Math.pow(10, -3) * (Math.pow((velocity * 12), 2)))
-    //                 + (-0.0629 * velocity * 12)
-    //                 + 1.29)
-    //             / 100000
-    //         + 0.1;
-    double motorSpeed = 0.7;
-
-    // Logger.recordOutput("Shooter/DesiredVelocity", velocity);
-    Logger.recordOutput("Shooter/DesiredMotorSpeed", motorSpeed);
-    return motorSpeed;
+    // (2.42 * Math.pow(10, -3) * (Math.pow(velocity, 2))) + (-0.127 * velocity) + 2.27;
+    return velocity;
   }
 }

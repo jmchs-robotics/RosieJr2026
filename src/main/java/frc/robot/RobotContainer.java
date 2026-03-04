@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.*;
@@ -41,14 +40,10 @@ public class RobotContainer {
   private final Vision vision;
   private final CommandXboxController driveController = new CommandXboxController(0);
   private final Drive drive;
+  private final Shooter shooter;
   private final LoggedDashboardChooser<Command> autoChooser;
 
   private SwerveDriveSimulation driveSimulation = null;
-
-  private final CommandGenericHID keyboard = new CommandGenericHID(1); // Keyboard 0 on port 0
-  private final Shooter shooter;
-  // private final CommandGenericHID keyboard = new CommandGenericHID(0); // Keyboard 0 on port 0
-  private final CommandXboxController controller = new CommandXboxController(0);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
