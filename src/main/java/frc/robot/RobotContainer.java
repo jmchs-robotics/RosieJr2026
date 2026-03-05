@@ -22,11 +22,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.*;
 import frc.robot.subsystems.drive.*;
-import frc.robot.subsystems.shooter.*;
 import frc.robot.subsystems.intake.*;
-import frc.robot.subsystems.oculus.Oculus;
-import frc.robot.subsystems.shooter.Shooter;
-import frc.robot.subsystems.shooter.ShooterIOTalonFX;
+import frc.robot.subsystems.oculus.*;
+import frc.robot.subsystems.shooter.*;
 import frc.robot.subsystems.vision.*;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
@@ -153,8 +151,6 @@ public class RobotContainer {
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
     // Configure the button bindings
 
-    shooter = new Shooter(new ShooterIOTalonFX(), drive);
-
     configureButtonBindings();
   }
 
@@ -184,9 +180,9 @@ public class RobotContainer {
                 .ignoringDisable(true));
 
     // Auto aim command example
-    @SuppressWarnings("resource")
-    PIDController aimController = new PIDController(0.2, 0.0, 0.0);
-    aimController.enableContinuousInput(-Math.PI, Math.PI);
+    // @SuppressWarnings("resource")
+    // PIDController aimController = new PIDController(0.2, 0.0, 0.0);
+    // aimController.enableContinuousInput(-Math.PI, Math.PI);
     // controller
     //     .a()
     //     .whileTrue(
@@ -220,7 +216,7 @@ public class RobotContainer {
     operatorController.povUp().onTrue(new IntakeUp(intake));
 
     driveController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
-    //driveController
+    // driveController
     //    .y()
     //    .onTrue(
     //        new InstantCommand(() -> drive.setPose(new Pose2d(1.582, 4.034, new Rotation2d(0)))));
