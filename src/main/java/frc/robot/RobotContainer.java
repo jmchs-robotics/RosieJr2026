@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.*;
+import frc.robot.commands.DriveToPose;
 import frc.robot.commands.ShooterRun;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.shooter.Shooter;
@@ -44,7 +45,10 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
 
   private final Vision vision;
-  private final CommandXboxController driveController = new CommandXboxController(0);
+  private final CommandXboxController controllerA = new CommandXboxController(0);
+  private final CommandXboxController controllerO = new CommandXboxController(1);
+  private CommandXboxController driveController;
+  private CommandXboxController operatorController;
   private final Drive drive;
   private final Shooter shooter;
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -53,6 +57,10 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+
+    driveController = controllerA;
+    operatorController = controllerO;
+
     switch (Constants.currentMode) {
       case REAL:
 
@@ -155,6 +163,15 @@ public class RobotContainer {
     configureButtonBindings();
   }
 
+  // Addie and Owen switch controllers, reference to the Ian DK swap of 2023
+  public void addieOwenSwap() {
+
+    CommandXboxController tempController = driveController;
+    driveController = operatorController;
+    operatorController = tempController;
+
+  }
+
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
@@ -197,6 +214,8 @@ public class RobotContainer {
     //             },
     //             drive));
 
+    operatorController.back().onTrue(new InstantCommand(() -> addieOwenSwap()));
+
     driveController
         .a()
         .whileTrue(
@@ -220,7 +239,7 @@ public class RobotContainer {
     //                 drive)
     //             .ignoringDisable(true));
     // Shooter button binding
-    driveController.x().whileTrue(new ShooterRun(shooter));
+    driveController.rightTrigger().whileTrue(new ShooterRun(shooter));
   }
 
   /**
