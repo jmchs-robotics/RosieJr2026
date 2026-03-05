@@ -21,6 +21,14 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.commands.DriveCommands;
+import frc.robot.commands.HopperRun;
+import frc.robot.commands.IntakeRun;
+import frc.robot.commands.IntakeUp;
+import frc.robot.commands.SlapDown;
+import frc.robot.subsystems.drive.*;
+import frc.robot.subsystems.intake.*;
+import frc.robot.subsystems.vision.*;
 import frc.robot.commands.*;
 import frc.robot.commands.ShooterRun;
 import frc.robot.subsystems.drive.*;
@@ -45,8 +53,12 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
 
   private final Vision vision;
-  private final CommandXboxController driveController = new CommandXboxController(0);
   private final Drive drive;
+  private final Intake intake;
+  private final Hopper hopper;
+
+  private final CommandXboxController driveController = new CommandXboxController(0);
+  private final CommandXboxController operatorController = new CommandXboxController(1);
   private final Shooter shooter;
   private final LoggedDashboardChooser<Command> autoChooser;
   private final Oculus oculus;
@@ -68,6 +80,12 @@ public class RobotContainer {
                 new ModuleIOSpark(2),
                 new ModuleIOSpark(3),
                 (pose) -> {});
+
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOLimelight(camera0Name, drive::getRotation),
+                new VisionIOLimelight(camera1Name, drive::getRotation));
 
         // vision =
         //     new Vision(
@@ -125,6 +143,9 @@ public class RobotContainer {
         break;
     }
 
+    intake = new Intake(new IntakeIOMotors());
+
+    hopper = new Hopper(new HopperIOMotor());
     oculus = new Oculus(drive);
     shooter = new Shooter(new ShooterIOTalonFX(), drive);
 
@@ -199,7 +220,7 @@ public class RobotContainer {
     //             drive));
 
     driveController
-        .a()
+        .rightStick()
         .whileTrue(
             DriveCommands.joystickDriveAtAngle(
                 drive,
@@ -207,14 +228,19 @@ public class RobotContainer {
                 () -> -driveController.getLeftX(),
                 () -> Rotation2d.kZero));
 
-    driveController
-        .y()
-        .onTrue(
-            new InstantCommand(() -> drive.setPose(new Pose2d(0.058, 4.034, new Rotation2d()))));
+    driveController.rightStick().onTrue(Commands.runOnce(drive::stopWithX, drive));
+
+    driveController.y().whileTrue(Commands.parallel(new IntakeRun(intake), new HopperRun(hopper)));
+
+    operatorController.rightBumper().whileTrue(new HopperRun(hopper));
+
+    operatorController.povDown().onTrue(new SlapDown(intake));
+
+    operatorController.povUp().onTrue(new IntakeUp(intake));
 
     driveController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    driveController.povDown().whileTrue(new DriveToPose(drive, driveController));
+    driveController.povRight().whileTrue(new DriveToPose(drive, driveController));
 
     // driveController
     //     .b()
@@ -226,7 +252,6 @@ public class RobotContainer {
     //                 drive)
     //             .ignoringDisable(true));
     // Shooter button binding
-    driveController.x().whileTrue(new ShooterRun(shooter));
   }
 
   /**
