@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.*;
 import frc.robot.commands.ShooterRun;
 import frc.robot.subsystems.drive.*;
+import frc.robot.subsystems.oculus.Oculus;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIOTalonFX;
 import frc.robot.subsystems.vision.*;
@@ -48,6 +49,7 @@ public class RobotContainer {
   private final Drive drive;
   private final Shooter shooter;
   private final LoggedDashboardChooser<Command> autoChooser;
+  private final Oculus oculus;
 
   private SwerveDriveSimulation driveSimulation = null;
 
@@ -72,11 +74,9 @@ public class RobotContainer {
         //         drive::addVisionMeasurement,
         //         new VisionIOLimelight(camera1, drive::getRotation),
         //         new VisionIOLimelight(camera1Name, drive::getRotation));
-        vision =
-            new Vision(
-                drive::addVisionMeasurement,
-                new VisionIOPhotonVision(bulldogCam1, robotToCamera1),
-                new VisionIOPhotonVision(bulldogCam2, robotToCamera2));
+        vision = new Vision(drive::addVisionMeasurement);
+        // new VisionIOPhotonVision(bulldogCam1, robotToCamera1),
+        // new VisionIOPhotonVision(bulldogCam2, robotToCamera2));
         break;
 
       case SIM:
@@ -125,6 +125,7 @@ public class RobotContainer {
         break;
     }
 
+    oculus = new Oculus(drive);
     shooter = new Shooter(new ShooterIOTalonFX(), drive);
 
     // Set up auto routines
@@ -205,6 +206,11 @@ public class RobotContainer {
                 () -> -driveController.getLeftY(),
                 () -> -driveController.getLeftX(),
                 () -> Rotation2d.kZero));
+
+    driveController
+        .y()
+        .onTrue(
+            new InstantCommand(() -> drive.setPose(new Pose2d(0.058, 4.034, new Rotation2d()))));
 
     driveController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
