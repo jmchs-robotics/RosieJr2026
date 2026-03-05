@@ -21,24 +21,13 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.commands.DriveCommands;
-import frc.robot.commands.HopperRun;
-import frc.robot.commands.IntakeRun;
-import frc.robot.commands.IntakeUp;
-import frc.robot.commands.SlapDown;
+import frc.robot.commands.*;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.intake.*;
-import frc.robot.subsystems.vision.*;
-import frc.robot.commands.*;
-import frc.robot.commands.ShooterRun;
-import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.oculus.Oculus;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIOTalonFX;
 import frc.robot.subsystems.vision.*;
-import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.vision.VisionIO;
-import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
@@ -84,17 +73,8 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                new VisionIOLimelight(camera0Name, drive::getRotation),
-                new VisionIOLimelight(camera1Name, drive::getRotation));
-
-        // vision =
-        //     new Vision(
-        //         drive::addVisionMeasurement,
-        //         new VisionIOLimelight(camera1, drive::getRotation),
-        //         new VisionIOLimelight(camera1Name, drive::getRotation));
-        vision = new Vision(drive::addVisionMeasurement);
-        // new VisionIOPhotonVision(bulldogCam1, robotToCamera1),
-        // new VisionIOPhotonVision(bulldogCam2, robotToCamera2));
+                new VisionIOPhotonVision(bulldogCam1, robotToCamera1),
+                new VisionIOPhotonVision(bulldogCam2, robotToCamera2));
         break;
 
       case SIM:
