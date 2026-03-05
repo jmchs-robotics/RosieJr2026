@@ -7,6 +7,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -25,6 +27,8 @@ public final class Constants {
   public void disableHAL() {
     disableHAL = true;
   }
+  public static final Translation2d hubPose =
+      new Translation2d(Units.inchesToMeters(182.11), Units.inchesToMeters(158.84));
 
   public static enum Mode {
     /** Running on a real robot. */
