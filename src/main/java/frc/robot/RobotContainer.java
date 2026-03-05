@@ -23,6 +23,10 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.*;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.shooter.*;
+import frc.robot.subsystems.intake.*;
+import frc.robot.subsystems.oculus.Oculus;
+import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.ShooterIOTalonFX;
 import frc.robot.subsystems.vision.*;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
@@ -38,10 +42,15 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
 
   private final Vision vision;
-  private final CommandXboxController driveController = new CommandXboxController(0);
   private final Drive drive;
+  private final Intake intake;
+  private final Hopper hopper;
+
+  private final CommandXboxController driveController = new CommandXboxController(0);
+  private final CommandXboxController operatorController = new CommandXboxController(1);
   private final Shooter shooter;
   private final LoggedDashboardChooser<Command> autoChooser;
+  private final Oculus oculus;
 
   private SwerveDriveSimulation driveSimulation = null;
 
@@ -61,14 +70,11 @@ public class RobotContainer {
                 new ModuleIOSpark(3),
                 (pose) -> {});
 
-        // vision =
-        //     new Vision(
-        //         drive::addVisionMeasurement,
-        //         new VisionIOLimelight(camera1, drive::getRotation),
-        //         new VisionIOLimelight(camera1Name, drive::getRotation));
-        vision = new Vision(drive::addVisionMeasurement);
-        // new VisionIOPhotonVision(bulldogCam1, robotToCamera1),
-        // new VisionIOPhotonVision(bulldogCam2, robotToCamera2));
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOPhotonVision(bulldogCam1, robotToCamera1),
+                new VisionIOPhotonVision(bulldogCam2, robotToCamera2));
         break;
 
       case SIM:
@@ -115,7 +121,12 @@ public class RobotContainer {
         break;
     }
 
-    drive.setPose(new Pose2d(1.582, 4.034, new Rotation2d(0)));
+    // drive.setPose(new Pose2d(1.582, 4.034, new Rotation2d(0)));
+    intake = new Intake(new IntakeIOMotors());
+
+    hopper = new Hopper(new HopperIOMotor());
+    oculus = new Oculus(drive);
+    shooter = new Shooter(new ShooterIOTalonFX(), drive);
 
     // Set up auto routines
 
@@ -172,20 +183,49 @@ public class RobotContainer {
                     })
                 .ignoringDisable(true));
 
-    // driveController
+    // Auto aim command example
+    @SuppressWarnings("resource")
+    PIDController aimController = new PIDController(0.2, 0.0, 0.0);
+    aimController.enableContinuousInput(-Math.PI, Math.PI);
+    // controller
     //     .a()
     //     .whileTrue(
-    //         DriveCommands.joystickDriveAtAngle(
-    //             drive,
-    //             () -> -driveController.getLeftY(),
-    //             () -> -driveController.getLeftX(),
-    //             () -> Rotation2d.kZero));
+    //         Commands.startRun(
+    //             () -> {
+    //               aimController.reset();
+    //             },
+    //             () -> {
+    //               DriveCommands.autoAim(
+    //                   drive, () -> aimController.calculate(vision.getTargetX(0).getRadians()));
+    //             },
+    //             drive));
+
+    driveController
+        .rightStick()
+        .whileTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> -driveController.getLeftY(),
+                () -> -driveController.getLeftX(),
+                () -> Rotation2d.kZero));
+
+    driveController.rightStick().onTrue(Commands.runOnce(drive::stopWithX, drive));
+
+    driveController.y().whileTrue(Commands.parallel(new IntakeRun(intake), new HopperRun(hopper)));
+
+    operatorController.rightBumper().whileTrue(new HopperRun(hopper));
+
+    operatorController.povDown().onTrue(new SlapDown(intake));
+
+    operatorController.povUp().onTrue(new IntakeUp(intake));
 
     driveController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
-    driveController
-        .y()
-        .onTrue(
-            new InstantCommand(() -> drive.setPose(new Pose2d(1.582, 4.034, new Rotation2d(0)))));
+    //driveController
+    //    .y()
+    //    .onTrue(
+    //        new InstantCommand(() -> drive.setPose(new Pose2d(1.582, 4.034, new Rotation2d(0)))));
+
+    driveController.povRight().whileTrue(new DriveToPose(drive, driveController));
 
     // driveController
     //     .b()
