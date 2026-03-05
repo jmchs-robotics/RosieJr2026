@@ -11,7 +11,6 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -23,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.*;
 import frc.robot.subsystems.drive.*;
+import frc.robot.subsystems.shooter.*;
 import frc.robot.subsystems.intake.*;
 import frc.robot.subsystems.oculus.Oculus;
 import frc.robot.subsystems.shooter.Shooter;
@@ -95,13 +95,11 @@ public class RobotContainer {
                 new ModuleIOSim(driveSimulation.getModules()[3]),
                 driveSimulation::setSimulationWorldPose);
 
-        vision =
-            new Vision(
-                drive::addVisionMeasurement,
-                new VisionIOPhotonVisionSim(
-                    bulldogCam1, robotToCamera1, driveSimulation::getSimulatedDriveTrainPose),
-                new VisionIOPhotonVisionSim(
-                    bulldogCam2, robotToCamera2, driveSimulation::getSimulatedDriveTrainPose));
+        vision = new Vision(drive::addVisionMeasurement);
+        // new VisionIOPhotonVisionSim(
+        //     bulldogCam1, robotToCamera1, driveSimulation::getSimulatedDriveTrainPose),
+        // new VisionIOPhotonVisionSim(
+        //     bulldogCam2, robotToCamera2, driveSimulation::getSimulatedDriveTrainPose));
         break;
 
       default:
@@ -123,6 +121,7 @@ public class RobotContainer {
         break;
     }
 
+    // drive.setPose(new Pose2d(1.582, 4.034, new Rotation2d(0)));
     intake = new Intake(new IntakeIOMotors());
 
     hopper = new Hopper(new HopperIOMotor());
@@ -153,6 +152,8 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
     // Configure the button bindings
+
+    shooter = new Shooter(new ShooterIOTalonFX(), drive);
 
     configureButtonBindings();
   }
@@ -219,6 +220,10 @@ public class RobotContainer {
     operatorController.povUp().onTrue(new IntakeUp(intake));
 
     driveController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    //driveController
+    //    .y()
+    //    .onTrue(
+    //        new InstantCommand(() -> drive.setPose(new Pose2d(1.582, 4.034, new Rotation2d(0)))));
 
     driveController.povRight().whileTrue(new DriveToPose(drive, driveController));
 
@@ -232,6 +237,7 @@ public class RobotContainer {
     //                 drive)
     //             .ignoringDisable(true));
     // Shooter button binding
+    driveController.rightTrigger().whileTrue(new ShooterRun(shooter));
   }
 
   /**
