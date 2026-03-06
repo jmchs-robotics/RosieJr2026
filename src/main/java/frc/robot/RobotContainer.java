@@ -9,27 +9,33 @@ package frc.robot;
 
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
+import java.util.Optional;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.*;
-import frc.robot.commands.ShooterRun;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIOTalonFX;
 import frc.robot.subsystems.vision.*;
-import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.vision.VisionIO;
-import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
+
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
@@ -48,6 +54,8 @@ public class RobotContainer {
   private final Drive drive;
   private final Shooter shooter;
   private final LoggedDashboardChooser<Command> autoChooser;
+  private final GenericEntry[] shiftTimes = new GenericEntry[1];
+  private boolean redInactiveFirst = (Boolean) null;
 
   private SwerveDriveSimulation driveSimulation = null;
 
@@ -231,6 +239,72 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     return autoChooser.get();
   }
+
+  private void setUpDriverTab(){
+    ShuffleboardTab driverTab = Shuffleboard.getTab("Driver Tab");
+  }
+
+
+
+        boolean isHubActive() {
+            Optional<Alliance> alliance = DriverStation.getAlliance();
+            // If we have no alliance, we cannot be enabled, therefore no hub.
+            if (alliance.isEmpty()) {
+                return false;
+            }
+            // Hub is always enabled in autonomous.
+            if (DriverStation.isAutonomousEnabled()) {
+                return true;
+            }
+            // At this point, if we're not teleop enabled, there is no hub.
+            if (!DriverStation.isTeleopEnabled()) {
+                return false;
+            }
+
+            // We're teleop enabled, compute.
+            double matchTime = DriverStation.getMatchTime();
+            String gameData = DriverStation.getGameSpecificMessage();
+            // If we have no game data, we cannot compute, assume hub is active, as its likely early in teleop.
+            if (gameData.isEmpty()) {
+                return true;
+            }
+            boolean redInactiveFirst = false;
+            switch (gameData.charAt(0)) {
+                case 'R' -> redInactiveFirst = true;
+                case 'B' -> redInactiveFirst = false;
+                default -> {
+                // If we have invalid game data, assume hub is active.
+                return true;
+                }
+            }
+
+            // Shift was is active for blue if red won auto, or red if blue won auto.
+            boolean shift1Active = switch (alliance.get()) {
+                case Red -> !redInactiveFirst:
+                case Blue -> redInactiveFirst:
+            };
+
+            if (matchTime > 130) {
+                // Transition shift, hub is active.
+                return true;
+            } else if (matchTime > 105) {
+                // Shift 1
+                return shift1Active;
+            } else if (matchTime > 80) {
+                // Shift 2
+                return !shift1Active;
+            } else if (matchTime > 55) {
+                // Shift 3
+                return shift1Active;
+            } else if (matchTime > 30) {
+                // Shift 4
+                return !shift1Active;
+            } else {
+                // End game, hub always active.
+                return true;
+            }
+        }
+
 
   public void resetSimulationField() {
     if (Constants.currentMode != Constants.Mode.SIM) return;
