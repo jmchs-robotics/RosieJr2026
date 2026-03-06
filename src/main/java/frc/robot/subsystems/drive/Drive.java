@@ -178,6 +178,17 @@ public class Drive extends SubsystemBase {
 
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
+
+    Command currentCommand = getCurrentCommand();
+    String commandAsString;
+
+    if (currentCommand != null) {
+      commandAsString = currentCommand.toString();
+    } else {
+      commandAsString = "No Scheduled Command";
+    }
+
+    Logger.recordOutput("Drive/ScheduledCommand", commandAsString);
   }
 
   /**

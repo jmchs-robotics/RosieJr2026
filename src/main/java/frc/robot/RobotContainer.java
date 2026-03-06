@@ -11,7 +11,6 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericEntry;
@@ -22,6 +21,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.*;
@@ -43,15 +43,13 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
 
   private final Vision vision;
-  private boolean addieBoolean = true;
-  private boolean owenBoolean = false;
+  private boolean addieBoolean;
+  private boolean owenBoolean;
   private int addieOwenCount = 0;
   private final CommandXboxController addieController = new CommandXboxController(0);
   private final CommandXboxController owenController = new CommandXboxController(1);
   private final GenericEntry addie;
   private final GenericEntry owen;
-  private CommandXboxController driveController;
-  private CommandXboxController operatorController;
   private final Drive drive;
   private final Shooter shooter;
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -61,8 +59,8 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
-    driveController = addieController;
-    operatorController = owenController;
+    addieBoolean = true;
+    owenBoolean = false;
 
     switch (Constants.currentMode) {
       case REAL:
@@ -182,19 +180,41 @@ public class RobotContainer {
             .getEntry();
 
     configureButtonBindings();
+
+    drive.setDefaultCommand(
+        DriveCommands.joystickDrive(
+            drive,
+            () -> -addieController.getLeftY(),
+            () -> -addieController.getLeftX(),
+            () -> -addieController.getRightX()));
   }
 
   // Addie and Owen switch controllers, reference to the Ian DK swap of 2023
   public void addieOwenSwap() {
 
-    CommandXboxController tempController = driveController;
-    driveController = operatorController;
-    operatorController = tempController;
-
     if (addieOwenCount % 2 == 0) {
+
+    // we need to reset the defualt command so that the last command that ran doesn't keep running
+      drive.setDefaultCommand(
+          DriveCommands.joystickDrive(
+              drive,
+              () -> -owenController.getLeftY(),
+              () -> -owenController.getLeftX(),
+              () -> -owenController.getRightX()));
+
       addieBoolean = false;
       owenBoolean = true;
+
     } else {
+
+    // we need to reset the defualt command so that the last command that ran doesn't keep running
+      drive.setDefaultCommand(
+          DriveCommands.joystickDrive(
+              drive,
+              () -> -addieController.getLeftY(),
+              () -> -addieController.getLeftX(),
+              () -> -addieController.getRightX()));
+
       owenBoolean = false;
       addieBoolean = true;
     }
@@ -210,16 +230,20 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    // Joystick drive command
-    drive.setDefaultCommand(
-        DriveCommands.joystickDrive(
-            drive,
-            () -> -driveController.getLeftY(),
-            () -> -driveController.getLeftX(),
-            () -> -driveController.getRightX()));
-
-    driveController
+    // switching the contollers themselves doesn't actually work so we need doubles of every command being calles
+    addieController
         .start()
+        .and(() -> addieBoolean)
+        .onTrue(
+            new InstantCommand(
+                    () -> {
+                      drive.zeroHeading();
+                    })
+                .ignoringDisable(true));
+
+    owenController
+        .start()
+        .and(() -> owenBoolean)
         .onTrue(
             new InstantCommand(
                     () -> {
@@ -228,9 +252,9 @@ public class RobotContainer {
                 .ignoringDisable(true));
 
     // Auto aim command example
-    @SuppressWarnings("resource")
-    PIDController aimController = new PIDController(0.2, 0.0, 0.0);
-    aimController.enableContinuousInput(-Math.PI, Math.PI);
+    // @SuppressWarnings("resource")
+    // PIDController aimController = new PIDController(0.2, 0.0, 0.0);
+    // aimController.enableContinuousInput(-Math.PI, Math.PI);
     // controller
     //     .a()
     //     .whileTrue(
@@ -244,24 +268,59 @@ public class RobotContainer {
     //             },
     //             drive));
 
-    operatorController
+    owenController
         .back()
-        .onTrue(new InstantCommand(() -> addieOwenSwap()).ignoringDisable(true));
+        .and(() -> addieBoolean)
+        .onTrue(
+            new ParallelCommandGroup(
+                new InstantCommand(() -> Commands.waitSeconds(0.0001), drive), 
+                // wait command because you need to reschedule some command when owen gets control so that he can actually start driving
+                new InstantCommand(() -> addieOwenSwap()).ignoringDisable(true)));
 
-    driveController
+    addieController
+        .back()
+        .and(() -> owenBoolean)
+        .onTrue(
+            new ParallelCommandGroup(
+                new InstantCommand(() -> Commands.waitSeconds(0.0001), drive),
+                // wait command because you need to reschedule some command when addie gets control so that she can actually start driving
+                new InstantCommand(() -> addieOwenSwap()).ignoringDisable(true)));
+
+    addieController
         .a()
+        .and(() -> addieBoolean)
         .whileTrue(
             DriveCommands.joystickDriveAtAngle(
                 drive,
-                () -> -driveController.getLeftY(),
-                () -> -driveController.getLeftX(),
+                () -> -addieController.getLeftY(),
+                () -> -addieController.getLeftX(),
                 () -> Rotation2d.kZero));
 
-    driveController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    owenController
+        .a()
+        .and(() -> owenBoolean)
+        .whileTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> -owenController.getLeftY(),
+                () -> -owenController.getLeftX(),
+                () -> Rotation2d.kZero));
 
-    driveController.povDown().whileTrue(new DriveToPose(drive, driveController));
+    addieController.x().and(() -> addieBoolean).onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    // driveController
+    owenController.x().and(() -> owenBoolean).onTrue(Commands.runOnce(drive::stopWithX, drive));
+
+    addieController
+        .povDown()
+        .and(() -> addieBoolean)
+        .whileTrue(new DriveToPose(drive, addieController));
+
+    owenController
+        .povDown()
+        .and(() -> owenBoolean)
+        .whileTrue(new DriveToPose(drive, owenController));
+
+    // addieController
     //     .b()
     //     .onTrue(
     //         Commands.runOnce(
@@ -271,7 +330,9 @@ public class RobotContainer {
     //                 drive)
     //             .ignoringDisable(true));
     // Shooter button binding
-    driveController.rightTrigger().whileTrue(new ShooterRun(shooter));
+    addieController.rightTrigger().and(() -> addieBoolean).whileTrue(new ShooterRun(shooter));
+
+    owenController.rightTrigger().and(() -> owenBoolean).whileTrue(new ShooterRun(shooter));
   }
 
   /**

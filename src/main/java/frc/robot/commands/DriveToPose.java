@@ -53,8 +53,11 @@ public class DriveToPose extends Command {
 
   @Override
   public void execute() {
-    thetaController.setP(thetakP.get());
-    thetaController.setD(thetakD.get());
+    if (thetakP.hasChanged(hashCode()) || thetakD.hasChanged(hashCode())) {
+      thetaController.setP(thetakP.get());
+      thetaController.setD(thetakD.get());
+    }
+
     Pose2d currentPose = drive.getPose();
 
     Rotation2d currentToHubAngle = hubPose.minus(currentPose.getTranslation()).getAngle();
