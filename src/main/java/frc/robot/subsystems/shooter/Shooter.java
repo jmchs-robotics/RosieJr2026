@@ -2,7 +2,6 @@ package frc.robot.subsystems.shooter;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.drive.Drive;
-
 import org.littletonrobotics.junction.Logger;
 
 public class Shooter extends SubsystemBase {

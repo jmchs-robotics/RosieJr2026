@@ -14,23 +14,21 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.*;
-import frc.robot.commands.DriveToPose;
-import frc.robot.commands.ShooterRun;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIOTalonFX;
 import frc.robot.subsystems.vision.*;
-import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.vision.VisionIO;
-import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
@@ -45,8 +43,13 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
 
   private final Vision vision;
-  private final CommandXboxController controllerA = new CommandXboxController(0);
-  private final CommandXboxController controllerO = new CommandXboxController(1);
+  private boolean addieBoolean = true;
+  private boolean owenBoolean = false;
+  private int addieOwenCount = 0;
+  private final CommandXboxController addieController = new CommandXboxController(0);
+  private final CommandXboxController owenController = new CommandXboxController(1);
+  private final GenericEntry addie;
+  private final GenericEntry owen;
   private CommandXboxController driveController;
   private CommandXboxController operatorController;
   private final Drive drive;
@@ -58,8 +61,8 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
-    driveController = controllerA;
-    operatorController = controllerO;
+    driveController = addieController;
+    operatorController = owenController;
 
     switch (Constants.currentMode) {
       case REAL:
@@ -160,6 +163,24 @@ public class RobotContainer {
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
     // Configure the button bindings
 
+    var teleopTab = Shuffleboard.getTab("teleop");
+
+    addie =
+        teleopTab
+            .add("Addie Driving", true)
+            .withWidget(BuiltInWidgets.kBooleanBox)
+            .withSize(3, 1)
+            .withPosition(0, 0)
+            .getEntry();
+
+    owen =
+        teleopTab
+            .add("Owen Driving", false)
+            .withWidget(BuiltInWidgets.kBooleanBox)
+            .withSize(3, 1)
+            .withPosition(0, 0)
+            .getEntry();
+
     configureButtonBindings();
   }
 
@@ -170,6 +191,15 @@ public class RobotContainer {
     driveController = operatorController;
     operatorController = tempController;
 
+    if (addieOwenCount % 2 == 0) {
+      addieBoolean = false;
+      owenBoolean = true;
+    } else {
+      owenBoolean = false;
+      addieBoolean = true;
+    }
+
+    addieOwenCount++;
   }
 
   /**
@@ -214,7 +244,9 @@ public class RobotContainer {
     //             },
     //             drive));
 
-    operatorController.back().onTrue(new InstantCommand(() -> addieOwenSwap()));
+    operatorController
+        .back()
+        .onTrue(new InstantCommand(() -> addieOwenSwap()).ignoringDisable(true));
 
     driveController
         .a()
@@ -266,5 +298,11 @@ public class RobotContainer {
         "FieldSimulation/RobotPosition", driveSimulation.getSimulatedDriveTrainPose());
     Logger.recordOutput(
         "FieldSimulation/Fuel", SimulatedArena.getInstance().getGamePiecesArrayByType("Fuel"));
+  }
+
+  public void updateElastic() {
+
+    addie.setBoolean(addieBoolean);
+    owen.setBoolean(owenBoolean);
   }
 }
