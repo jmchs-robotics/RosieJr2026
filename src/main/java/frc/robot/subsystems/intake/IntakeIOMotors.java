@@ -38,6 +38,8 @@ public class IntakeIOMotors implements IntakeIO {
     intakeSlapDownMotor.getConfigurator().apply(new Slot0Configs().withKD(kD.get()));
 
     intakeSlapDownMotor.setPosition(0);
+
+    intakeSlapDownMotor.getConfigurator().apply(config);
   }
 
   @Override
@@ -51,7 +53,6 @@ public class IntakeIOMotors implements IntakeIO {
     inputs.intakeSlapDownCurrentAmps = intakeSlapDownMotor.getSupplyCurrent().getValueAsDouble();
     inputs.intakeSlapDownVelocityRotPerSec =
         intakeSlapDownMotor.getRotorVelocity().getValueAsDouble();
-    intakeSlapDownMotor.getConfigurator().apply(config);
   }
 
   @Override

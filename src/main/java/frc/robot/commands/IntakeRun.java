@@ -17,7 +17,7 @@ public class IntakeRun extends Command {
 
   @Override
   public void execute() {
-    m_Intake.setWheelMotor(-0.35);
+    m_Intake.setWheelMotor(-0.2);
   }
 
   @Override

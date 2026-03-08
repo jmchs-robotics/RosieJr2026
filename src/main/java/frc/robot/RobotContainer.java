@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.*;
@@ -209,7 +210,7 @@ public class RobotContainer {
 
     driveController.y().whileTrue(Commands.parallel(new IntakeRun(intake), new HopperRun(hopper)));
 
-    operatorController.rightBumper().whileTrue(new HopperRun(hopper));
+    driveController.b().whileTrue(new ReverseHopper(hopper));
 
     operatorController.povDown().onTrue(new SlapDown(intake));
 
@@ -221,7 +222,7 @@ public class RobotContainer {
     //    .onTrue(
     //        new InstantCommand(() -> drive.setPose(new Pose2d(1.582, 4.034, new Rotation2d(0)))));
 
-    driveController.povRight().whileTrue(new DriveToPose(drive, driveController));
+    driveController.a().whileTrue(new DriveToPose(drive, driveController));
 
     // driveController
     //     .b()
@@ -233,7 +234,9 @@ public class RobotContainer {
     //                 drive)
     //             .ignoringDisable(true));
     // Shooter button binding
-    driveController.rightTrigger().whileTrue(new ShooterRun(shooter));
+    driveController
+        .rightTrigger()
+        .whileTrue(new ParallelCommandGroup(new ShooterRun(shooter), new HopperRun(hopper)));
   }
 
   /**
