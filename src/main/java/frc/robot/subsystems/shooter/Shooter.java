@@ -1,8 +1,10 @@
 package frc.robot.subsystems.shooter;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.drive.Drive;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Shooter extends SubsystemBase {
@@ -28,14 +30,15 @@ public class Shooter extends SubsystemBase {
     Logger.processInputs("Shooter", inputs);
   }
 
+  @AutoLogOutput
   public double calculateSpeed() {
     double shooterToHub =
-        Constants.hubPose.getDistance(
-            drive.getPose().getTranslation()); // distance between shooter and hub
+        Units.metersToFeet(
+            Constants.hubPose.getDistance(
+                drive.getPose().getTranslation())); // distance between shooter and hub
 
-    double velocity =
-        ((6.17 * (Math.pow(10, -3) * Math.pow(shooterToHub, 2))) + (-1.16 * shooterToHub) + 103)
-            / 180;
+    double velocity = (21 + 15 * ((shooterToHub - 4.1) / 13.2)) * 1.047 * 5.75;
+    // ((6.17 * (Math.pow(10, -3) * Math.pow(shooterToHub, 2))) + (-1.16 * shooterToHub) + 103);
     // (shooterToHub * Math.sin(ShooterConstants.shooterTheta)
     //         - (2
     //             * Math.cos(ShooterConstants.shooterTheta)

@@ -17,10 +17,7 @@ public class Oculus extends SubsystemBase {
 
     questNav = new QuestNav();
     m_drive = drive;
-    questPose =
-        new Pose3d(drive.getPose())
-            .transformBy(OculusConstants.ROBOT_TO_QUEST)
-            .rotateBy(new Rotation3d(Math.PI / 2, 0, Math.PI));
+    resetPose();
 
     // questNav.setPose(new Pose3d(0.058, 4.034, 0, new Rotation3d(Math.PI / 2, 0, Math.PI)));
   }
@@ -50,5 +47,13 @@ public class Oculus extends SubsystemBase {
             robotPose.toPose2d(), timestamp, OculusConstants.QUESTNAV_STD_DEVS);
       }
     }
+  }
+
+  public void resetPose() {
+    questPose =
+        new Pose3d(m_drive.getPose())
+            .transformBy(OculusConstants.ROBOT_TO_QUEST)
+            .rotateBy(new Rotation3d(Math.PI / 2, 0, Math.PI));
+    questNav.setPose(questPose);
   }
 }
