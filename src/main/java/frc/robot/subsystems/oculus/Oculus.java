@@ -1,22 +1,26 @@
 package frc.robot.subsystems.oculus;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.drive.Drive;
 import gg.questnav.questnav.PoseFrame;
 import gg.questnav.questnav.QuestNav;
+import java.util.function.Supplier;
+import org.littletonrobotics.junction.Logger;
 
 public class Oculus extends SubsystemBase {
 
   private final QuestNav questNav;
   private final Drive m_drive;
   private Pose3d questPose;
+  private final Supplier<Pose2d> drivePose;
 
   public Oculus(Drive drive) {
 
     questNav = new QuestNav();
     m_drive = drive;
+    drivePose = () -> drive.getPose();
     resetPose();
 
     // questNav.setPose(new Pose3d(0.058, 4.034, 0, new Rotation3d(Math.PI / 2, 0, Math.PI)));
@@ -50,10 +54,12 @@ public class Oculus extends SubsystemBase {
   }
 
   public void resetPose() {
-    questPose =
-        new Pose3d(m_drive.getPose())
-            .transformBy(OculusConstants.ROBOT_TO_QUEST)
-            .rotateBy(new Rotation3d(Math.PI / 2, 0, Math.PI));
+    questPose = new Pose3d(drivePose.get()).transformBy(OculusConstants.ROBOT_TO_QUEST);
+    Logger.recordOutput("questPose", questPose);
     questNav.setPose(questPose);
+  }
+
+  public void setPose(Pose3d pose) {
+    questNav.setPose(pose);
   }
 }

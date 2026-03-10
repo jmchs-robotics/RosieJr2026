@@ -49,6 +49,6 @@ public class Shooter extends SubsystemBase {
 
     // double motorSpeed =
     // (2.42 * Math.pow(10, -3) * (Math.pow(velocity, 2))) + (-0.127 * velocity) + 2.27;
-    return velocity;
+    return 100;
   }
 }

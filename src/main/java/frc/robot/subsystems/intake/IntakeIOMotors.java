@@ -1,9 +1,9 @@
 package frc.robot.subsystems.intake;
 
-import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -16,8 +16,8 @@ public class IntakeIOMotors implements IntakeIO {
   private final TalonFX intakeSlapDownMotor;
 
   private final SparkFlex intakeMotor;
-  private final LoggedTunableNumber kP = new LoggedTunableNumber("intake kP");
-  private final LoggedTunableNumber kD = new LoggedTunableNumber("intake kD");
+  private final LoggedTunableNumber kP = new LoggedTunableNumber("intake kP", 0.01);
+  private final LoggedTunableNumber kD = new LoggedTunableNumber("intake kD", 0);
   private final TalonFXConfiguration config = new TalonFXConfiguration();
 
   public IntakeIOMotors() {
@@ -27,15 +27,15 @@ public class IntakeIOMotors implements IntakeIO {
     intakeSlapDownMotor.setPosition(0);
 
     config.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
-        Units.Rotations.of(0).in(Units.Rotations);
+        Units.Rotations.of(10).in(Units.Rotations);
 
     intakeMotor = new SparkFlex(10, MotorType.kBrushless);
 
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     config.CurrentLimits.SupplyCurrentLimit = 40;
-
-    intakeSlapDownMotor.getConfigurator().apply(new Slot0Configs().withKP(kP.get()));
-    intakeSlapDownMotor.getConfigurator().apply(new Slot0Configs().withKD(kD.get()));
+    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    config.Slot0.kP = 0.01;
+    config.Slot0.kD = 0;
 
     intakeSlapDownMotor.setPosition(0);
 

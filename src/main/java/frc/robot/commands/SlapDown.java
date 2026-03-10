@@ -1,7 +1,5 @@
 package frc.robot.commands;
 
-import static edu.wpi.first.units.Units.Degrees;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.intake.Intake;
 
@@ -20,14 +18,16 @@ public class SlapDown extends Command {
 
   @Override
   public void execute() {
-    m_slapDown.setPosition(Degrees.of(60));
+    m_slapDown.setSlapDownMotor(0.3);
   }
 
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    m_slapDown.setSlapDownMotor(0);
+  }
 
   @Override
   public boolean isFinished() {
-    return true;
+    return false;
   }
 }
