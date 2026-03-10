@@ -12,8 +12,10 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -26,8 +28,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.*;
 import frc.robot.subsystems.drive.*;
-import frc.robot.subsystems.shooter.Shooter;
-import frc.robot.subsystems.shooter.ShooterIOTalonFX;
+import frc.robot.subsystems.intake.*;
+import frc.robot.subsystems.oculus.*;
+import frc.robot.subsystems.shooter.*;
 import frc.robot.subsystems.vision.*;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
@@ -51,7 +54,15 @@ public class RobotContainer {
   private final GenericEntry addie;
   private final GenericEntry owen;
   private final Drive drive;
+  private final Intake intake;
+  private final Hopper hopper;
   private final Shooter shooter;
+  private final Oculus oculus;
+  private final Vision vision;
+
+  private final CommandXboxController driveController = new CommandXboxController(0);
+  private final CommandXboxController operatorController = new CommandXboxController(1);
+
   private final LoggedDashboardChooser<Command> autoChooser;
 
   private SwerveDriveSimulation driveSimulation = null;
@@ -76,11 +87,6 @@ public class RobotContainer {
                 new ModuleIOSpark(3),
                 (pose) -> {});
 
-        // vision =
-        //     new Vision(
-        //         drive::addVisionMeasurement,
-        //         new VisionIOLimelight(camera1, drive::getRotation),
-        //         new VisionIOLimelight(camera1Name, drive::getRotation));
         vision =
             new Vision(
                 drive::addVisionMeasurement,
@@ -106,13 +112,11 @@ public class RobotContainer {
                 new ModuleIOSim(driveSimulation.getModules()[3]),
                 driveSimulation::setSimulationWorldPose);
 
-        vision =
-            new Vision(
-                drive::addVisionMeasurement,
-                new VisionIOPhotonVisionSim(
-                    bulldogCam1, robotToCamera1, driveSimulation::getSimulatedDriveTrainPose),
-                new VisionIOPhotonVisionSim(
-                    bulldogCam2, robotToCamera2, driveSimulation::getSimulatedDriveTrainPose));
+        vision = new Vision(drive::addVisionMeasurement);
+        // new VisionIOPhotonVisionSim(
+        //     bulldogCam1, robotToCamera1, driveSimulation::getSimulatedDriveTrainPose),
+        // new VisionIOPhotonVisionSim(
+        //     bulldogCam2, robotToCamera2, driveSimulation::getSimulatedDriveTrainPose));
         break;
 
       default:
@@ -134,14 +138,22 @@ public class RobotContainer {
         break;
     }
 
+    // drive.setPose(new Pose2d(1.582, 4.034, new Rotation2d(0)));
+    intake = new Intake(new IntakeIOMotors());
+    hopper = new Hopper(new HopperIOMotor());
+    oculus = new Oculus(drive);
     shooter = new Shooter(new ShooterIOTalonFX(), drive);
 
     // Set up auto routines
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     // TODO add the actual commands when merged
-    NamedCommands.registerCommand("intake", Commands.none());
-    NamedCommands.registerCommand("shoot", Commands.none());
+    NamedCommands.registerCommand(
+        "intake", Commands.sequence(new SlapDown(intake), new IntakeRun(intake).withTimeout(3)));
+    NamedCommands.registerCommand(
+        "shoot",
+        new ParallelCommandGroup(new ShooterRun(shooter), new HopperRun(hopper)).withTimeout(5));
+    NamedCommands.registerCommand("reset oculus", new InstantCommand(() -> oculus.resetPose()));
 
     // Set up SysId routines
 
@@ -314,6 +326,23 @@ public class RobotContainer {
         .povDown()
         .and(() -> addieBoolean)
         .whileTrue(new DriveToPose(drive, addieController));
+    driveController.y().whileTrue(Commands.parallel(new IntakeRun(intake), new HopperRun(hopper)));
+
+    driveController.b().whileTrue(new ReverseHopper(hopper));
+
+    operatorController.povDown().whileTrue(new SlapDown(intake));
+
+    operatorController.povUp().whileTrue(new IntakeUp(intake));
+
+    driveController
+        .leftBumper()
+        .onTrue(new InstantCommand(() -> oculus.setPose(new Pose3d(5, 5, 0, new Rotation3d()))));
+    // driveController
+    //    .y()
+    //    .onTrue(
+    //        new InstantCommand(() -> drive.setPose(new Pose2d(1.582, 4.034, new Rotation2d(0)))));
+
+    driveController.a().whileTrue(new DriveToPose(drive, driveController));
 
     owenController
         .povDown()
