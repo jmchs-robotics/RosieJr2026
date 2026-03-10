@@ -25,9 +25,11 @@ public class DriveToPose extends Command {
 
   private final CommandXboxController driveController;
 
+  private final double threshold = 0.5;
+
   static {
-    thetakP.initDefault(10);
-    thetakD.initDefault(0.8);
+    thetakP.initDefault(0.01);
+    thetakD.initDefault(0.9);
   }
 
   private final Drive drive;
@@ -71,7 +73,7 @@ public class DriveToPose extends Command {
               currentToHubAngle.minus(Rotation2d.kPi).getRadians());
     }
 
-    if (drive != null) {
+    if (drive != null && Math.abs(currentToHubAngle.getDegrees()) > threshold) {
       drive.runVelocity(
           ChassisSpeeds.fromFieldRelativeSpeeds(
               -driveController.getLeftY() * drive.getMaxLinearSpeedMetersPerSec(),
