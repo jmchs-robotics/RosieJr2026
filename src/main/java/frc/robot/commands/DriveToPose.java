@@ -3,14 +3,13 @@ package frc.robot.commands;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.util.LoggedTunableNumber;
 
@@ -20,8 +19,6 @@ public class DriveToPose extends Command {
   private static final LoggedTunableNumber thetakD = new LoggedTunableNumber("DriveToPose/ThetakD");
 
   private static boolean isFlipped = false;
-  private static final Translation2d hubPose =
-      new Translation2d(Units.inchesToMeters(182.11), Units.inchesToMeters(158.84));
 
   private final CommandXboxController driveController;
 
@@ -59,21 +56,28 @@ public class DriveToPose extends Command {
     thetaController.setD(thetakD.get());
     Pose2d currentPose = drive.getPose();
 
-    Rotation2d currentToHubAngle = hubPose.minus(currentPose.getTranslation()).getAngle();
-
     double thetaVelocity;
+    Rotation2d currentToHubAngle;
     if (!isFlipped) {
+
+      currentToHubAngle =
+          Constants.blueHub.getTranslation().minus(currentPose.getTranslation()).getAngle();
+
       thetaVelocity =
           thetaController.calculate(
               drive.getRotation().getRadians(), currentToHubAngle.getRadians());
     } else {
+      currentToHubAngle =
+          Constants.redHub.getTranslation().minus(currentPose.getTranslation()).getAngle();
+
       thetaVelocity =
           thetaController.calculate(
-              drive.getRotation().getRadians(),
-              currentToHubAngle.minus(Rotation2d.kPi).getRadians());
+              drive.getRotation().getRadians(), currentToHubAngle.getRadians());
     }
 
-    if (drive != null && Math.abs(currentToHubAngle.getDegrees()) > threshold) {
+    if (drive != null
+        && Math.abs(drive.getRotation().getDegrees() - currentToHubAngle.getDegrees())
+            > threshold) {
       drive.runVelocity(
           ChassisSpeeds.fromFieldRelativeSpeeds(
               -driveController.getLeftY() * drive.getMaxLinearSpeedMetersPerSec(),

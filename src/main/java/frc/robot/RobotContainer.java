@@ -42,16 +42,17 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  */
 public class RobotContainer {
 
-  private final Vision vision;
   private final Drive drive;
   private final Intake intake;
   private final Hopper hopper;
+  private final Shooter shooter;
+  private final Oculus oculus;
+  private final Vision vision;
 
   private final CommandXboxController driveController = new CommandXboxController(0);
   private final CommandXboxController operatorController = new CommandXboxController(1);
-  private final Shooter shooter;
+
   private final LoggedDashboardChooser<Command> autoChooser;
-  private final Oculus oculus;
 
   private SwerveDriveSimulation driveSimulation = null;
 
@@ -124,7 +125,6 @@ public class RobotContainer {
 
     // drive.setPose(new Pose2d(1.582, 4.034, new Rotation2d(0)));
     intake = new Intake(new IntakeIOMotors());
-
     hopper = new Hopper(new HopperIOMotor());
     oculus = new Oculus(drive);
     shooter = new Shooter(new ShooterIOTalonFX(), drive);
@@ -186,34 +186,6 @@ public class RobotContainer {
                     })
                 .ignoringDisable(true));
 
-    // Auto aim command example
-    // @SuppressWarnings("resource")
-    // PIDController aimController = new PIDController(0.2, 0.0, 0.0);
-    // aimController.enableContinuousInput(-Math.PI, Math.PI);
-    // controller
-    //     .a()
-    //     .whileTrue(
-    //         Commands.startRun(
-    //             () -> {
-    //               aimController.reset();
-    //             },
-    //             () -> {
-    //               DriveCommands.autoAim(
-    //                   drive, () -> aimController.calculate(vision.getTargetX(0).getRadians()));
-    //             },
-    //             drive));
-
-    driveController
-        .rightStick()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -driveController.getLeftY(),
-                () -> -driveController.getLeftX(),
-                () -> Rotation2d.kZero));
-
-    driveController.rightStick().onTrue(Commands.runOnce(drive::stopWithX, drive));
-
     driveController.y().whileTrue(Commands.parallel(new IntakeRun(intake), new HopperRun(hopper)));
 
     driveController.b().whileTrue(new ReverseHopper(hopper));
@@ -221,8 +193,6 @@ public class RobotContainer {
     operatorController.povDown().whileTrue(new SlapDown(intake));
 
     operatorController.povUp().whileTrue(new IntakeUp(intake));
-
-    driveController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     driveController
         .leftBumper()
