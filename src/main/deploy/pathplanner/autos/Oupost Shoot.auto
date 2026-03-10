@@ -5,6 +5,12 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "reset oculus"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "OT-O"
