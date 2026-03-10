@@ -12,10 +12,8 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -45,7 +43,6 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  */
 public class RobotContainer {
 
-  private final Vision vision;
   private boolean addieBoolean;
   private boolean owenBoolean;
   private int addieOwenCount = 0;
@@ -53,15 +50,13 @@ public class RobotContainer {
   private final CommandXboxController owenController = new CommandXboxController(1);
   private final GenericEntry addie;
   private final GenericEntry owen;
+
   private final Drive drive;
   private final Intake intake;
   private final Hopper hopper;
   private final Shooter shooter;
   private final Oculus oculus;
   private final Vision vision;
-
-  private final CommandXboxController driveController = new CommandXboxController(0);
-  private final CommandXboxController operatorController = new CommandXboxController(1);
 
   private final LoggedDashboardChooser<Command> autoChooser;
 
@@ -206,7 +201,7 @@ public class RobotContainer {
 
     if (addieOwenCount % 2 == 0) {
 
-    // we need to reset the defualt command so that the last command that ran doesn't keep running
+      // we need to reset the defualt command so that the last command that ran doesn't keep running
       drive.setDefaultCommand(
           DriveCommands.joystickDrive(
               drive,
@@ -219,7 +214,7 @@ public class RobotContainer {
 
     } else {
 
-    // we need to reset the defualt command so that the last command that ran doesn't keep running
+      // we need to reset the defualt command so that the last command that ran doesn't keep running
       drive.setDefaultCommand(
           DriveCommands.joystickDrive(
               drive,
@@ -242,7 +237,8 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    // switching the contollers themselves doesn't actually work so we need doubles of every command being calles
+    // switching the contollers themselves doesn't actually work so we need doubles of every command
+    // being calles
     addieController
         .start()
         .and(() -> addieBoolean)
@@ -285,8 +281,9 @@ public class RobotContainer {
         .and(() -> addieBoolean)
         .onTrue(
             new ParallelCommandGroup(
-                new InstantCommand(() -> Commands.waitSeconds(0.0001), drive), 
-                // wait command because you need to reschedule some command when owen gets control so that he can actually start driving
+                new InstantCommand(() -> Commands.waitSeconds(0.0001), drive),
+                // wait command because you need to reschedule some command when owen gets control
+                // so that he can actually start driving
                 new InstantCommand(() -> addieOwenSwap()).ignoringDisable(true)));
 
     addieController
@@ -295,59 +292,44 @@ public class RobotContainer {
         .onTrue(
             new ParallelCommandGroup(
                 new InstantCommand(() -> Commands.waitSeconds(0.0001), drive),
-                // wait command because you need to reschedule some command when addie gets control so that she can actually start driving
+                // wait command because you need to reschedule some command when addie gets control
+                // so that she can actually start driving
                 new InstantCommand(() -> addieOwenSwap()).ignoringDisable(true)));
 
+    addieController.a().and(() -> addieBoolean).whileTrue(new DriveToPose(drive, addieController));
+
+    owenController.a().and(() -> owenBoolean).whileTrue(new DriveToPose(drive, owenController));
+
     addieController
-        .a()
+        .y()
         .and(() -> addieBoolean)
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -addieController.getLeftY(),
-                () -> -addieController.getLeftX(),
-                () -> Rotation2d.kZero));
+        .whileTrue(Commands.parallel(new IntakeRun(intake), new HopperRun(hopper)));
 
     owenController
-        .a()
+        .y()
         .and(() -> owenBoolean)
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -owenController.getLeftY(),
-                () -> -owenController.getLeftX(),
-                () -> Rotation2d.kZero));
+        .whileTrue(Commands.parallel(new IntakeRun(intake), new HopperRun(hopper)));
 
-    addieController.x().and(() -> addieBoolean).onTrue(Commands.runOnce(drive::stopWithX, drive));
+    addieController.x().and(() -> addieBoolean).whileTrue(new ReverseHopper(hopper));
 
-    owenController.x().and(() -> owenBoolean).onTrue(Commands.runOnce(drive::stopWithX, drive));
+    owenController.x().and(() -> owenBoolean).whileTrue(new ReverseHopper(hopper));
 
-    addieController
-        .povDown()
-        .and(() -> addieBoolean)
-        .whileTrue(new DriveToPose(drive, addieController));
-    driveController.y().whileTrue(Commands.parallel(new IntakeRun(intake), new HopperRun(hopper)));
+    owenController.povDown().and(() -> addieBoolean).whileTrue(new SlapDown(intake));
 
-    driveController.b().whileTrue(new ReverseHopper(hopper));
+    addieController.povDown().and(() -> owenBoolean).whileTrue(new SlapDown(intake));
 
-    operatorController.povDown().whileTrue(new SlapDown(intake));
+    owenController.povUp().and(() -> addieBoolean).whileTrue(new IntakeUp(intake));
 
-    operatorController.povUp().whileTrue(new IntakeUp(intake));
+    addieController.povUp().and(() -> owenBoolean).whileTrue(new IntakeUp(intake));
 
-    driveController
-        .leftBumper()
-        .onTrue(new InstantCommand(() -> oculus.setPose(new Pose3d(5, 5, 0, new Rotation3d()))));
+    addieController.rightTrigger().and(() -> addieBoolean).whileTrue(new ShooterRun(shooter));
+
+    owenController.rightTrigger().and(() -> owenBoolean).whileTrue(new ShooterRun(shooter));
+
     // driveController
     //    .y()
     //    .onTrue(
     //        new InstantCommand(() -> drive.setPose(new Pose2d(1.582, 4.034, new Rotation2d(0)))));
-
-    driveController.a().whileTrue(new DriveToPose(drive, driveController));
-
-    owenController
-        .povDown()
-        .and(() -> owenBoolean)
-        .whileTrue(new DriveToPose(drive, owenController));
 
     // addieController
     //     .b()
@@ -359,9 +341,7 @@ public class RobotContainer {
     //                 drive)
     //             .ignoringDisable(true));
     // Shooter button binding
-    addieController.rightTrigger().and(() -> addieBoolean).whileTrue(new ShooterRun(shooter));
 
-    owenController.rightTrigger().and(() -> owenBoolean).whileTrue(new ShooterRun(shooter));
   }
 
   /**
