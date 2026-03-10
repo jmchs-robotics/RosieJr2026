@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.util.LoggedTunableNumber;
+import org.littletonrobotics.junction.Logger;
 
 public class DriveToPose extends Command {
 
@@ -25,8 +26,8 @@ public class DriveToPose extends Command {
   private final double threshold = 0.5;
 
   static {
-    thetakP.initDefault(0.01);
-    thetakD.initDefault(0.9);
+    thetakP.initDefault(0.6);
+    thetakD.initDefault(0.05);
   }
 
   private final Drive drive;
@@ -85,8 +86,12 @@ public class DriveToPose extends Command {
           ChassisSpeeds.fromFieldRelativeSpeeds(
               -driveController.getLeftY() * drive.getMaxLinearSpeedMetersPerSec(),
               -driveController.getLeftX() * drive.getMaxLinearSpeedMetersPerSec(),
-              thetaVelocity, // * drive.getMaxAngularSpeedRadPerSec(),
+              thetaVelocity * drive.getMaxAngularSpeedRadPerSec(),
               drive.getRotation()));
     }
+    Logger.recordOutput("current to hub angle", currentToHubAngle.getDegrees());
+    Logger.recordOutput(
+        "aiming error",
+        Math.abs(drive.getRotation().getDegrees() - currentToHubAngle.getDegrees()));
   }
 }

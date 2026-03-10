@@ -310,17 +310,21 @@ public class RobotContainer {
         .and(() -> owenBoolean)
         .whileTrue(Commands.parallel(new IntakeRun(intake), new HopperRun(hopper)));
 
-    addieController.x().and(() -> addieBoolean).whileTrue(new ReverseHopper(hopper));
+    addieController.x().and(() -> addieBoolean).whileTrue(new ReverseIntake(intake));
 
-    owenController.x().and(() -> owenBoolean).whileTrue(new ReverseHopper(hopper));
+    owenController.x().and(() -> owenBoolean).whileTrue(new ReverseIntake(intake));
+
+    addieController.b().and(() -> addieBoolean).whileTrue(new ReverseHopper(hopper));
+
+    owenController.b().and(() -> owenBoolean).whileTrue(new ReverseHopper(hopper));
 
     owenController.povDown().and(() -> addieBoolean).whileTrue(new SlapDown(intake));
 
     addieController.povDown().and(() -> owenBoolean).whileTrue(new SlapDown(intake));
 
-    owenController.povUp().and(() -> addieBoolean).whileTrue(new IntakeUp(intake));
+    // owenController.povUp().and(() -> addieBoolean).whileTrue(new IntakeUp(intake));
 
-    addieController.povUp().and(() -> owenBoolean).whileTrue(new IntakeUp(intake));
+    // addieController.povUp().and(() -> owenBoolean).whileTrue(new IntakeUp(intake));
 
     addieController.rightTrigger().and(() -> addieBoolean).whileTrue(new ShooterRun(shooter));
 
