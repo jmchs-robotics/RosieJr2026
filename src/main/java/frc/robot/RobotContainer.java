@@ -12,7 +12,9 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -131,8 +133,12 @@ public class RobotContainer {
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     // TODO add the actual commands when merged
-    NamedCommands.registerCommand("intake", Commands.none());
-    NamedCommands.registerCommand("shoot", Commands.none());
+    NamedCommands.registerCommand(
+        "intake", Commands.sequence(new SlapDown(intake), new IntakeRun(intake).withTimeout(3)));
+    NamedCommands.registerCommand(
+        "shoot",
+        new ParallelCommandGroup(new ShooterRun(shooter), new HopperRun(hopper)).withTimeout(5));
+    NamedCommands.registerCommand("reset oculus", new InstantCommand(() -> oculus.resetPose()));
 
     // Set up SysId routines
 
@@ -212,11 +218,15 @@ public class RobotContainer {
 
     driveController.b().whileTrue(new ReverseHopper(hopper));
 
-    operatorController.povDown().onTrue(new SlapDown(intake));
+    operatorController.povDown().whileTrue(new SlapDown(intake));
 
-    operatorController.povUp().onTrue(new IntakeUp(intake));
+    operatorController.povUp().whileTrue(new IntakeUp(intake));
 
     driveController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+
+    driveController
+        .leftBumper()
+        .onTrue(new InstantCommand(() -> oculus.setPose(new Pose3d(5, 5, 0, new Rotation3d()))));
     // driveController
     //    .y()
     //    .onTrue(
