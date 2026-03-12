@@ -23,4 +23,6 @@ public class OculusConstants {
           0.02, // the pose can be within 2 cm in the y of where you want to be
           0.035 // the pose can be within 2 degrees of where you want to be
           );
+
+  public static final boolean useOculus = false;
 }

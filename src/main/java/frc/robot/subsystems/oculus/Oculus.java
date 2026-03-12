@@ -29,26 +29,28 @@ public class Oculus extends SubsystemBase {
   @Override
   public void periodic() {
     questNav.commandPeriodic();
+    if (OculusConstants.useOculus) {
 
-    PoseFrame[] poseFrame;
-    poseFrame = questNav.getAllUnreadPoseFrames();
+      PoseFrame[] poseFrame;
+      poseFrame = questNav.getAllUnreadPoseFrames();
 
-    for (PoseFrame questFrame : poseFrame) {
+      for (PoseFrame questFrame : poseFrame) {
 
-      questPose = questFrame.questPose3d();
-      Pose3d robotPose = questPose.transformBy(OculusConstants.ROBOT_TO_QUEST.inverse());
+        questPose = questFrame.questPose3d();
+        Pose3d robotPose = questPose.transformBy(OculusConstants.ROBOT_TO_QUEST.inverse());
 
-      // Make sure the Quest was tracking the pose for this frame
-      if (questFrame.isTracking()) {
+        // Make sure the Quest was tracking the pose for this frame
+        if (questFrame.isTracking()) {
 
-        // Get timestamp for when the data was sent
-        double timestamp = questFrame.dataTimestamp();
+          // Get timestamp for when the data was sent
+          double timestamp = questFrame.dataTimestamp();
 
-        // You can put some sort of filtering here if you would like!
+          // You can put some sort of filtering here if you would like!
 
-        // Add the measurement to our estimator
-        m_drive.addVisionMeasurement(
-            robotPose.toPose2d(), timestamp, OculusConstants.QUESTNAV_STD_DEVS);
+          // Add the measurement to our estimator
+          m_drive.addVisionMeasurement(
+              robotPose.toPose2d(), timestamp, OculusConstants.QUESTNAV_STD_DEVS);
+        }
       }
     }
   }
