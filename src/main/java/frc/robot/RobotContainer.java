@@ -330,6 +330,10 @@ public class RobotContainer {
 
     owenController.rightTrigger().and(() -> owenBoolean).whileTrue(new ShooterRun(shooter));
 
+    addieController.leftTrigger().and(() -> addieBoolean).whileTrue(new PassingCommand(shooter));
+
+    owenController.leftTrigger().and(() -> owenBoolean).whileTrue(new PassingCommand(shooter));
+
     // driveController
     //    .y()
     //    .onTrue(
