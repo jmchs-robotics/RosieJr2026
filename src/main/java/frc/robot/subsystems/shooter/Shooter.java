@@ -29,6 +29,7 @@ public class Shooter extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Shooter", inputs);
+    isFlipped = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red;
   }
 
   public void setMotor(double speed) {

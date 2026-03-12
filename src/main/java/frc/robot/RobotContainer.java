@@ -326,11 +326,20 @@ public class RobotContainer {
 
     // addieController.povUp().and(() -> owenBoolean).whileTrue(new IntakeUp(intake));
 
-    addieController.rightTrigger().and(() -> addieBoolean).whileTrue(new ShooterRun(shooter));
+    addieController
+        .rightTrigger()
+        .and(() -> addieBoolean)
+        .whileTrue(new ParallelCommandGroup(new ShooterRun(shooter), new HopperRun(hopper)));
 
-    owenController.rightTrigger().and(() -> owenBoolean).whileTrue(new ShooterRun(shooter));
+    owenController
+        .rightTrigger()
+        .and(() -> owenBoolean)
+        .whileTrue(new ParallelCommandGroup(new ShooterRun(shooter), new HopperRun(hopper)));
 
-    addieController.leftTrigger().and(() -> addieBoolean).whileTrue(new PassingCommand(shooter));
+    addieController
+        .leftTrigger()
+        .and(() -> addieBoolean)
+        .whileTrue(new ParallelCommandGroup(new PassingCommand(shooter), new HopperRun(hopper)));
 
     owenController.leftTrigger().and(() -> owenBoolean).whileTrue(new PassingCommand(shooter));
 

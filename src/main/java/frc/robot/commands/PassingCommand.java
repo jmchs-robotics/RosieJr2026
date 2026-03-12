@@ -6,7 +6,7 @@ import frc.robot.subsystems.shooter.Shooter;
 public class PassingCommand extends Command {
 
   private final Shooter m_shooter;
-  double motorSpeed = 50;
+  double motorSpeed = 380;
 
   public PassingCommand(Shooter shooter) {
     m_shooter = shooter;
