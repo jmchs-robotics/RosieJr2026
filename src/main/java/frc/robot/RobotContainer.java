@@ -341,7 +341,10 @@ public class RobotContainer {
         .and(() -> addieBoolean)
         .whileTrue(new ParallelCommandGroup(new PassingCommand(shooter), new HopperRun(hopper)));
 
-    owenController.leftTrigger().and(() -> owenBoolean).whileTrue(new PassingCommand(shooter));
+    owenController
+        .leftTrigger()
+        .and(() -> owenBoolean)
+        .whileTrue(new ParallelCommandGroup(new PassingCommand(shooter), new HopperRun(hopper)));
 
     if (Constants.currentMode == Constants.Mode.SIM) {
       addieController.rightBumper().whileTrue(new ShootSim(driveSimulation, shooter));
