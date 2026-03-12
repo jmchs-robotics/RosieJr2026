@@ -334,6 +334,10 @@ public class RobotContainer {
 
     owenController.leftTrigger().and(() -> owenBoolean).whileTrue(new PassingCommand(shooter));
 
+    if (Constants.currentMode == Constants.Mode.SIM) {
+      addieController.rightBumper().whileTrue(new ShootSim(driveSimulation, shooter));
+    }
+
     // driveController
     //    .y()
     //    .onTrue(
