@@ -28,6 +28,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
@@ -41,6 +42,8 @@ public class DriveCommands {
   private static final double FF_RAMP_RATE = 0.1; // Volts/Sec
   private static final double WHEEL_RADIUS_MAX_VELOCITY = 0.25; // Rad/Sec
   private static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // Rad/Sec^2
+
+  private static BooleanSupplier FLIP_DRIVE = () -> false;
 
   private DriveCommands() {}
 
@@ -68,15 +71,15 @@ public class DriveCommands {
       DoubleSupplier omegaSupplier) {
     return Commands.run(
         () -> {
-          boolean isFlipped =
-              DriverStation.getAlliance().isPresent()
-                  && DriverStation.getAlliance().get() == Alliance.Red;
+          // boolean isFlipped =
+          //     DriverStation.getAlliance().isPresent()
+          //         && DriverStation.getAlliance().get() == Alliance.Red;
 
           // Get linear velocity
           Translation2d linearVelocity =
               getLinearVelocityFromJoysticks(
-                  xSupplier.getAsDouble() * (isFlipped ? -1 : 1),
-                  ySupplier.getAsDouble() * (isFlipped ? -1 : 1));
+                  xSupplier.getAsDouble() * (FLIP_DRIVE.getAsBoolean() ? -1 : 1),
+                  ySupplier.getAsDouble() * (FLIP_DRIVE.getAsBoolean() ? -1 : 1));
 
           // Apply rotation deadband
           double omega = MathUtil.applyDeadband(omegaSupplier.getAsDouble(), DEADBAND);
@@ -93,7 +96,7 @@ public class DriveCommands {
           drive.runVelocity(
               ChassisSpeeds.fromFieldRelativeSpeeds(
                   speeds,
-                  isFlipped
+                  FLIP_DRIVE.getAsBoolean()
                       ? drive.getRotation().plus(new Rotation2d(Math.PI))
                       : drive.getRotation()));
         },
@@ -155,6 +158,14 @@ public class DriveCommands {
 
         // Reset PID controller when command starts
         .beforeStarting(() -> angleController.reset(drive.getRotation().getRadians()));
+  }
+
+  public static void toggleFlippedDrive() {
+    if (FLIP_DRIVE.getAsBoolean()) {
+      FLIP_DRIVE = () -> false;
+    } else {
+      FLIP_DRIVE = () -> true;
+    }
   }
 
   public static Command autoAim(Drive drive, DoubleSupplier omegaSupplier) {

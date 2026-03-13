@@ -368,6 +368,15 @@ public class RobotContainer {
         .and(() -> owenBoolean)
         .whileTrue(new ParallelCommandGroup(new IntakeFullSpeed(intake), new HopperRun(hopper)));
 
+    addieController
+        .povUp()
+        .and(() -> addieBoolean)
+        .onTrue(new InstantCommand(() -> DriveCommands.toggleFlippedDrive()));
+    owenController
+        .povUp()
+        .and(() -> owenBoolean)
+        .onTrue(new InstantCommand(() -> DriveCommands.toggleFlippedDrive()));
+
     if (Constants.currentMode == Constants.Mode.SIM) {
       addieController.rightBumper().whileTrue(new ShootSim(driveSimulation, shooter));
     }

@@ -36,10 +36,12 @@ public class Oculus extends SubsystemBase {
     poseFrame = questNav.getAllUnreadPoseFrames();
     List<Pose3d> observedPoses = new LinkedList<Pose3d>();
     List<Pose2d> acceptedPoses = new LinkedList<Pose2d>();
+    List<Pose3d> oculusPoses = new LinkedList<>();
 
     for (PoseFrame questFrame : poseFrame) {
 
       questPose = questFrame.questPose3d();
+      oculusPoses.add(questPose);
       Pose3d robotPose = questPose.transformBy(OculusConstants.ROBOT_TO_QUEST.inverse());
       observedPoses.add(robotPose);
 
@@ -67,7 +69,12 @@ public class Oculus extends SubsystemBase {
       for (int i = 0; i < acceptedPosesArray.length; i++) {
         acceptedPosesArray[i] = acceptedPoses.get(i);
       }
+      Pose3d[] oculusPosesArray = new Pose3d[oculusPoses.size()];
+      for (int i = 0; i < oculusPosesArray.length; i++) {
+        oculusPosesArray[i] = oculusPoses.get(i);
+      }
 
+      Logger.recordOutput("Oculus/OculusPoses", oculusPosesArray);
       Logger.recordOutput("Oculus/ObservedPoses", observedPosesArray);
       Logger.recordOutput("Oculus/AcceptedPoses", acceptedPosesArray);
     }
