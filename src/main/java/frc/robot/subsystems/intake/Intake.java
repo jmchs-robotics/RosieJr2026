@@ -3,11 +3,16 @@ package frc.robot.subsystems.intake;
 // kraken 60 and neo vortex
 // addie put this in to check
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
 
   private final IntakeIO io;
+
+  private final Alert intakeWheelsAlert = new Alert("intake wheels disconnected", AlertType.kError);
+  private final Alert slapDownAlert = new Alert("slap down moter disconnected", AlertType.kError);
 
   private final IntakeIOInputsAutoLogged inputs;
 
@@ -20,6 +25,9 @@ public class Intake extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     // Logger.processInputs("intake", inputs);
+
+    intakeWheelsAlert.set(!inputs.intakeIsConnected);
+    slapDownAlert.set(!inputs.slapDownIsConnected);
   }
 
   public void setWheelMotor(double speed) {

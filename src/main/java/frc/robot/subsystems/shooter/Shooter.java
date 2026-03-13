@@ -1,7 +1,9 @@
 package frc.robot.subsystems.shooter;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -14,6 +16,9 @@ public class Shooter extends SubsystemBase {
   private final ShooterIO io;
   private final Drive drive;
   private static boolean isFlipped = false;
+
+  private final Alert shooterAlert = new Alert("shooter disconnected", AlertType.kError);
+  private final Alert followAlert = new Alert("shooter follower disconnected", AlertType.kError);
 
   private final ShooterIOInputsAutoLogged inputs;
 
@@ -30,6 +35,9 @@ public class Shooter extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Shooter", inputs);
     isFlipped = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red;
+
+    shooterAlert.set(!inputs.shooterIsConnected);
+    followAlert.set(!inputs.followerIsConnected);
   }
 
   public void setMotor(double speed) {

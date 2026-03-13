@@ -141,10 +141,10 @@ public class RobotContainer {
     // Set up auto routines
 
     NamedCommands.registerCommand(
-        "intake", Commands.sequence(new SlapDown(intake), new IntakeRun(intake).withTimeout(3)));
+        "intake", Commands.sequence(new SlapDown(intake).withTimeout(1), new IntakeRun(intake)));
     NamedCommands.registerCommand(
         "shoot",
-        new ParallelCommandGroup(new ShooterRun(shooter), new HopperRun(hopper)).withTimeout(5));
+        new ParallelCommandGroup(new ShooterRun(shooter), new HopperRun(hopper)));
     NamedCommands.registerCommand("reset oculus", new InstantCommand(() -> oculus.resetPose()));
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());

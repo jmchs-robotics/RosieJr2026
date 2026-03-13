@@ -53,9 +53,9 @@ public class IntakeIOMotors implements IntakeIO {
   public void updateInputs(IntakeIOInputs inputs) {
 
     // "wok" - max walley 2026
-    inputs.intakeAppliedVolts = intakeMotor.getBusVoltage() * intakeMotor.getAppliedOutput();
-    inputs.intakeCurrentAmps = intakeMotor.getOutputCurrent();
-    inputs.intakeVelocityRotPerSec = intakeMotor.getEncoder().getVelocity();
+    // inputs.intakeAppliedVolts = intakeMotor.getBusVoltage() * intakeMotor.getAppliedOutput();
+    // inputs.intakeCurrentAmps = intakeMotor.getOutputCurrent();
+    // inputs.intakeVelocityRotPerSec = intakeMotor.getEncoder().getVelocity();
     inputs.intakeSlapDownAppliedVolts = intakeSlapDownMotor.getSupplyVoltage().getValueAsDouble();
     inputs.intakeSlapDownCurrentAmps = intakeSlapDownMotor.getSupplyCurrent().getValueAsDouble();
     inputs.intakeSlapDownVelocityRotPerSec =
@@ -74,6 +74,7 @@ public class IntakeIOMotors implements IntakeIO {
         (values) -> inputs.intakeAppliedVolts = values[0] * values[1]);
     ifOk(intakeMotor, intakeMotor::getOutputCurrent, (value) -> inputs.intakeCurrentAmps = value);
     inputs.intakeIsConnected = !sparkStickyFault;
+
   }
 
   @Override
