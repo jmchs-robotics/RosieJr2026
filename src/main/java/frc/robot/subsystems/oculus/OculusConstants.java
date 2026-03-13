@@ -15,7 +15,7 @@ public class OculusConstants {
           Units.inchesToMeters(-3.291),
           Units.inchesToMeters(-10.085),
           Units.inchesToMeters(14.188),
-          new Rotation3d(Math.PI / 2, 0, Math.PI));
+          new Rotation3d(Math.PI / 2, 0, 0 /*Math.PI*/));
 
   public static Matrix<N3, N1> QUESTNAV_STD_DEVS =
       VecBuilder.fill(
