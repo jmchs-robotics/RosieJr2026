@@ -143,12 +143,24 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "intake", Commands.sequence(new SlapDown(intake).withTimeout(1), new IntakeRun(intake)));
     NamedCommands.registerCommand(
-        "shoot",
-        new ParallelCommandGroup(new ShooterRun(shooter), new HopperRun(hopper)));
+        "shoot", new ParallelCommandGroup(new ShooterRun(shooter), new HopperRun(hopper), new DriveToPoseAuto(drive)));
     NamedCommands.registerCommand("reset oculus", new InstantCommand(() -> oculus.resetPose()));
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-
+    autoChooser.addOption(
+        "BLUE initailize to point",
+        new InstantCommand(
+            () -> {
+              drive.setPose(new Pose2d(3.638, 0.496, Rotation2d.kZero));
+              oculus.resetPose();
+            }));
+    autoChooser.addOption(
+        "RED initailize to point",
+        new InstantCommand(
+            () -> {
+              drive.setPose(new Pose2d(12.794, 7.641, Rotation2d.k180deg));
+              oculus.resetPose();
+            }));
     // Set up SysId routines
 
     // autoChooser.addOption(

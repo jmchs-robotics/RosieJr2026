@@ -74,7 +74,6 @@ public class IntakeIOMotors implements IntakeIO {
         (values) -> inputs.intakeAppliedVolts = values[0] * values[1]);
     ifOk(intakeMotor, intakeMotor::getOutputCurrent, (value) -> inputs.intakeCurrentAmps = value);
     inputs.intakeIsConnected = !sparkStickyFault;
-
   }
 
   @Override

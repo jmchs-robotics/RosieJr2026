@@ -34,7 +34,7 @@
   "eventMarkers": [
     {
       "name": "intakeFuelAtNeutral",
-      "waypointRelativePos": 0.6432548179871548,
+      "waypointRelativePos": 0.21141439205955054,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
