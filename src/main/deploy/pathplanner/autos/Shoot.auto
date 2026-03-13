@@ -11,6 +11,12 @@
           }
         },
         {
+          "type": "path",
+          "data": {
+            "pathName": "H-Shoot"
+          }
+        },
+        {
           "type": "named",
           "data": {
             "name": "shoot"
