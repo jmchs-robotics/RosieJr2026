@@ -6,6 +6,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.drive.Drive;
 import gg.questnav.questnav.PoseFrame;
 import gg.questnav.questnav.QuestNav;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
@@ -29,35 +31,51 @@ public class Oculus extends SubsystemBase {
   @Override
   public void periodic() {
     questNav.commandPeriodic();
-    if (OculusConstants.useOculus) {
 
-      PoseFrame[] poseFrame;
-      poseFrame = questNav.getAllUnreadPoseFrames();
+    PoseFrame[] poseFrame;
+    poseFrame = questNav.getAllUnreadPoseFrames();
+    List<Pose3d> observedPoses = new LinkedList<Pose3d>();
+    List<Pose2d> acceptedPoses = new LinkedList<Pose2d>();
 
-      for (PoseFrame questFrame : poseFrame) {
+    for (PoseFrame questFrame : poseFrame) {
 
-        questPose = questFrame.questPose3d();
-        Pose3d robotPose = questPose.transformBy(OculusConstants.ROBOT_TO_QUEST.inverse());
+      questPose = questFrame.questPose3d();
+      Pose3d robotPose = questPose.transformBy(OculusConstants.ROBOT_TO_QUEST.inverse());
+      observedPoses.add(robotPose);
 
-        // Make sure the Quest was tracking the pose for this frame
-        if (questFrame.isTracking()) {
+      // Make sure the Quest was tracking the pose for this frame
+      if (questFrame.isTracking()) {
 
-          // Get timestamp for when the data was sent
-          double timestamp = questFrame.dataTimestamp();
+        // Get timestamp for when the data was sent
+        double timestamp = questFrame.dataTimestamp();
+        acceptedPoses.add(robotPose.toPose2d());
 
-          // You can put some sort of filtering here if you would like!
+        // You can put some sort of filtering here if you would like!
 
+        if (OculusConstants.useOculus) {
           // Add the measurement to our estimator
           m_drive.addVisionMeasurement(
               robotPose.toPose2d(), timestamp, OculusConstants.QUESTNAV_STD_DEVS);
         }
       }
+
+      Pose3d[] observedPosesArray = new Pose3d[observedPoses.size()];
+      for (int i = 0; i < observedPosesArray.length; i++) {
+        observedPosesArray[i] = observedPoses.get(i);
+      }
+      Pose2d[] acceptedPosesArray = new Pose2d[acceptedPoses.size()];
+      for (int i = 0; i < acceptedPosesArray.length; i++) {
+        acceptedPosesArray[i] = acceptedPoses.get(i);
+      }
+
+      Logger.recordOutput("Oculus/ObservedPoses", observedPosesArray);
+      Logger.recordOutput("Oculus/AcceptedPoses", acceptedPosesArray);
     }
   }
 
   public void resetPose() {
     questPose = new Pose3d(drivePose.get()).transformBy(OculusConstants.ROBOT_TO_QUEST);
-    Logger.recordOutput("questPose", questPose);
+    // Logger.recordOutput("questPose", questPose);
     questNav.setPose(questPose);
   }
 

@@ -143,7 +143,9 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "intake", Commands.sequence(new SlapDown(intake).withTimeout(1), new IntakeRun(intake)));
     NamedCommands.registerCommand(
-        "shoot", new ParallelCommandGroup(new ShooterRun(shooter), new HopperRun(hopper), new DriveToPoseAuto(drive)));
+        "shoot",
+        new ParallelCommandGroup(
+            new ShooterRun(shooter), new HopperRun(hopper), new DriveToPoseAuto(drive)));
     NamedCommands.registerCommand("reset oculus", new InstantCommand(() -> oculus.resetPose()));
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -357,8 +359,14 @@ public class RobotContainer {
         .and(() -> owenBoolean)
         .whileTrue(new ParallelCommandGroup(new PassingCommand(shooter), new HopperRun(hopper)));
 
-    owenController.y().and(()-> addieBoolean).whileTrue(new IntakeFullSpeed(intake));
-    addieController.y().and(()-> owenBoolean).whileTrue(new IntakeFullSpeed(intake));
+    owenController
+        .y()
+        .and(() -> addieBoolean)
+        .whileTrue(new ParallelCommandGroup(new IntakeFullSpeed(intake), new HopperRun(hopper)));
+    addieController
+        .y()
+        .and(() -> owenBoolean)
+        .whileTrue(new ParallelCommandGroup(new IntakeFullSpeed(intake), new HopperRun(hopper)));
 
     if (Constants.currentMode == Constants.Mode.SIM) {
       addieController.rightBumper().whileTrue(new ShootSim(driveSimulation, shooter));

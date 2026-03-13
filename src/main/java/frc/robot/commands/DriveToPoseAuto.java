@@ -8,16 +8,12 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.util.LoggedTunableNumber;
-import org.littletonrobotics.junction.Logger;
 
 public class DriveToPoseAuto extends Command {
 
   private static boolean isFlipped = false;
-
 
   private final double threshold = 0.5;
 
@@ -70,10 +66,7 @@ public class DriveToPoseAuto extends Command {
             > threshold) {
       drive.runVelocity(
           ChassisSpeeds.fromFieldRelativeSpeeds(
-              0,
-              0,
-              thetaVelocity * drive.getMaxAngularSpeedRadPerSec(),
-              drive.getRotation()));
+              0, 0, thetaVelocity * drive.getMaxAngularSpeedRadPerSec(), drive.getRotation()));
     }
   }
 }
