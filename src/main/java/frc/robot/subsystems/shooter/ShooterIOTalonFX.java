@@ -30,6 +30,8 @@ public class ShooterIOTalonFX implements ShooterIO {
     inputs.shooterAppliedVolts = shooterMotor.getSupplyVoltage().getValueAsDouble();
     inputs.shooterCurrentAmps = shooterMotor.getSupplyCurrent().getValueAsDouble();
     inputs.shooterVelocityRotPerSec = shooterMotor.getRotorVelocity().getValueAsDouble();
+    inputs.shooterIsConnected = shooterMotor.isConnected();
+    inputs.followerIsConnected = followerMotor.isConnected();
   }
 
   @Override

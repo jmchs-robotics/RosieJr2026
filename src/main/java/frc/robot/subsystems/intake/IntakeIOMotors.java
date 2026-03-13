@@ -1,15 +1,19 @@
 package frc.robot.subsystems.intake;
 
+import static frc.robot.util.SparkUtil.*;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import frc.robot.util.LoggedTunableNumber;
+import java.util.function.DoubleSupplier;
 
 public class IntakeIOMotors implements IntakeIO {
 
@@ -19,6 +23,7 @@ public class IntakeIOMotors implements IntakeIO {
   private final LoggedTunableNumber kP = new LoggedTunableNumber("intake kP", 0.01);
   private final LoggedTunableNumber kD = new LoggedTunableNumber("intake kD", 0);
   private final TalonFXConfiguration config = new TalonFXConfiguration();
+  private final RelativeEncoder intakeEncoder;
 
   public IntakeIOMotors() {
 
@@ -40,6 +45,8 @@ public class IntakeIOMotors implements IntakeIO {
     intakeSlapDownMotor.setPosition(0);
 
     intakeSlapDownMotor.getConfigurator().apply(config);
+
+    intakeEncoder = intakeMotor.getEncoder();
   }
 
   @Override
@@ -53,6 +60,20 @@ public class IntakeIOMotors implements IntakeIO {
     inputs.intakeSlapDownCurrentAmps = intakeSlapDownMotor.getSupplyCurrent().getValueAsDouble();
     inputs.intakeSlapDownVelocityRotPerSec =
         intakeSlapDownMotor.getRotorVelocity().getValueAsDouble();
+    inputs.slapDownIsConnected = intakeSlapDownMotor.isConnected();
+
+    sparkStickyFault = false;
+
+    ifOk(
+        intakeMotor,
+        intakeEncoder::getVelocity,
+        (value) -> inputs.intakeVelocityRotPerSec = value * 60);
+    ifOk(
+        intakeMotor,
+        new DoubleSupplier[] {intakeMotor::getAppliedOutput, intakeMotor::getBusVoltage},
+        (values) -> inputs.intakeAppliedVolts = values[0] * values[1]);
+    ifOk(intakeMotor, intakeMotor::getOutputCurrent, (value) -> inputs.intakeCurrentAmps = value);
+    inputs.intakeIsConnected = !sparkStickyFault;
   }
 
   @Override

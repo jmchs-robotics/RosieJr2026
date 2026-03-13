@@ -14,6 +14,8 @@ public interface IntakeIO {
     public double intakeSlapDownCurrentAmps = 0.0;
     public double intakeSlapDownAppliedVolts = 0.0;
     public double intakeSlapDownVelocityRotPerSec = 0.0;
+    public boolean slapDownIsConnected = false;
+    public boolean intakeIsConnected = false;
   }
 
   public default void updateInputs(IntakeIOInputs inputs) {}

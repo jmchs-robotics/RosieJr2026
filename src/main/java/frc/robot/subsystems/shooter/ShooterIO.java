@@ -10,6 +10,8 @@ public interface ShooterIO {
     public double shooterCurrentAmps = 0.0;
     public double shooterAppliedVolts = 0.0;
     public double shooterVelocityRotPerSec = 0.0;
+    public boolean shooterIsConnected = false;
+    public boolean followerIsConnected = false;
   }
 
   public default void updateInputs(ShooterIOInputs inputs) {}

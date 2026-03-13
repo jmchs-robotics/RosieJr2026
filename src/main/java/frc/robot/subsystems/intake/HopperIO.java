@@ -10,6 +10,7 @@ public interface HopperIO {
     public double hopperCurrentAmps = 0.0;
     public double hopperAppliedVolts = 0.0;
     public double hopperVelocityRotPerSec = 0.0;
+    public boolean hopperIsConnected = false;
   }
 
   public default void updateInputs(HopperIOInputs inputs) {}
