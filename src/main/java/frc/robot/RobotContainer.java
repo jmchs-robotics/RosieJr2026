@@ -44,6 +44,7 @@ public class RobotContainer {
 
   private boolean addieBoolean;
   private boolean owenBoolean;
+  private boolean redFlip;
   private int addieOwenCount = 0;
   private final CommandXboxController addieController = new CommandXboxController(0);
   private final CommandXboxController owenController = new CommandXboxController(1);
@@ -66,6 +67,7 @@ public class RobotContainer {
 
     addieBoolean = true;
     owenBoolean = false;
+    redFlip = false;
 
     switch (Constants.currentMode) {
       case REAL:
@@ -215,31 +217,87 @@ public class RobotContainer {
     if (addieOwenCount % 2 == 0) {
 
       // we need to reset the defualt command so that the last command that ran doesn't keep running
-      drive.setDefaultCommand(
-          DriveCommands.joystickDrive(
-              drive,
-              () -> -owenController.getLeftY(),
-              () -> -owenController.getLeftX(),
-              () -> -owenController.getRightX()));
 
       addieBoolean = false;
       owenBoolean = true;
+      if (redFlip) {
+        drive.setDefaultCommand(
+            DriveCommands.joystickDrive(
+                drive,
+                () -> owenController.getLeftY(),
+                () -> owenController.getLeftX(),
+                () -> owenController.getRightX()));
+      } else {
+        drive.setDefaultCommand(
+            DriveCommands.joystickDrive(
+                drive,
+                () -> -owenController.getLeftY(),
+                () -> -owenController.getLeftX(),
+                () -> -owenController.getRightX()));
+      }
 
     } else {
 
       // we need to reset the defualt command so that the last command that ran doesn't keep running
-      drive.setDefaultCommand(
-          DriveCommands.joystickDrive(
-              drive,
-              () -> -addieController.getLeftY(),
-              () -> -addieController.getLeftX(),
-              () -> -addieController.getRightX()));
+      if (redFlip) {
+        drive.setDefaultCommand(
+            DriveCommands.joystickDrive(
+                drive,
+                () -> addieController.getLeftY(),
+                () -> addieController.getLeftX(),
+                () -> addieController.getRightX()));
+      } else {
+        drive.setDefaultCommand(
+            DriveCommands.joystickDrive(
+                drive,
+                () -> -addieController.getLeftY(),
+                () -> -addieController.getLeftX(),
+                () -> -addieController.getRightX()));
+      }
 
       owenBoolean = false;
       addieBoolean = true;
     }
 
     addieOwenCount++;
+  }
+
+  private void RedFlip() {
+    if (redFlip) {
+      redFlip = false;
+      if (addieBoolean) {
+        drive.setDefaultCommand(
+            DriveCommands.joystickDrive(
+                drive,
+                () -> -addieController.getLeftY(),
+                () -> -addieController.getLeftX(),
+                () -> -addieController.getRightX()));
+      } else {
+        drive.setDefaultCommand(
+            DriveCommands.joystickDrive(
+                drive,
+                () -> -owenController.getLeftY(),
+                () -> -owenController.getLeftX(),
+                () -> -owenController.getRightX()));
+      }
+    } else {
+      redFlip = true;
+      if (addieBoolean) {
+        drive.setDefaultCommand(
+            DriveCommands.joystickDrive(
+                drive,
+                () -> addieController.getLeftY(),
+                () -> addieController.getLeftX(),
+                () -> addieController.getRightX()));
+      } else {
+        drive.setDefaultCommand(
+            DriveCommands.joystickDrive(
+                drive,
+                () -> owenController.getLeftY(),
+                () -> owenController.getLeftX(),
+                () -> owenController.getRightX()));
+      }
+    }
   }
 
   /**
@@ -371,11 +429,21 @@ public class RobotContainer {
     addieController
         .povUp()
         .and(() -> addieBoolean)
-        .onTrue(new InstantCommand(() -> DriveCommands.toggleFlippedDrive()));
+        .onTrue(
+            new ParallelCommandGroup(
+                new InstantCommand(() -> Commands.waitSeconds(0.0001), drive),
+                // wait command because you need to reschedule some command when owen gets control
+                // so that he can actually start driving
+                new InstantCommand(() -> RedFlip()).ignoringDisable(true)));
     owenController
         .povUp()
         .and(() -> owenBoolean)
-        .onTrue(new InstantCommand(() -> DriveCommands.toggleFlippedDrive()));
+        .onTrue(
+            new ParallelCommandGroup(
+                new InstantCommand(() -> Commands.waitSeconds(0.0001), drive),
+                // wait command because you need to reschedule some command when owen gets control
+                // so that he can actually start driving
+                new InstantCommand(() -> RedFlip()).ignoringDisable(true)));
 
     if (Constants.currentMode == Constants.Mode.SIM) {
       addieController.rightBumper().whileTrue(new ShootSim(driveSimulation, shooter));
