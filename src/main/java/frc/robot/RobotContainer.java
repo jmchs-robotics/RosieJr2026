@@ -147,8 +147,7 @@ public class RobotContainer {
         Commands.sequence(new SlapDown(intake).withTimeout(1), new IntakeFullSpeed(intake)));
     NamedCommands.registerCommand(
         "shoot",
-        new ParallelCommandGroup(
-            new ShooterRun(shooter), new HopperRun(hopper), new DriveToPoseAuto(drive)));
+        new ParallelCommandGroup(new ShooterSequence(shooter, hopper), new DriveToPoseAuto(drive)));
     NamedCommands.registerCommand("reset oculus", new InstantCommand(() -> oculus.resetPose()));
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -401,22 +400,22 @@ public class RobotContainer {
     addieController
         .rightTrigger()
         .and(() -> addieBoolean)
-        .whileTrue(new ParallelCommandGroup(new ShooterRun(shooter), new HopperRun(hopper)));
+        .whileTrue(new ShooterSequence(shooter, hopper));
 
     owenController
         .rightTrigger()
         .and(() -> owenBoolean)
-        .whileTrue(new ParallelCommandGroup(new ShooterRun(shooter), new HopperRun(hopper)));
+        .whileTrue(new ShooterSequence(shooter, hopper));
 
     addieController
         .leftTrigger()
         .and(() -> addieBoolean)
-        .whileTrue(new ParallelCommandGroup(new PassingCommand(shooter), new HopperRun(hopper)));
+        .whileTrue(new PassingSequence(shooter, hopper));
 
     owenController
         .leftTrigger()
         .and(() -> owenBoolean)
-        .whileTrue(new ParallelCommandGroup(new PassingCommand(shooter), new HopperRun(hopper)));
+        .whileTrue(new PassingSequence(shooter, hopper));
 
     owenController
         .y()
