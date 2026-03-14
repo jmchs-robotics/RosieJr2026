@@ -143,7 +143,8 @@ public class RobotContainer {
     // Set up auto routines
 
     NamedCommands.registerCommand(
-        "intake", Commands.sequence(new SlapDown(intake).withTimeout(1), new IntakeRun(intake)));
+        "intake",
+        Commands.sequence(new SlapDown(intake).withTimeout(1), new IntakeFullSpeed(intake)));
     NamedCommands.registerCommand(
         "shoot",
         new ParallelCommandGroup(

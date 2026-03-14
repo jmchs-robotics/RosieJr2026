@@ -13,9 +13,9 @@ public class OculusConstants {
   public static Transform3d ROBOT_TO_QUEST =
       new Transform3d(
           Units.inchesToMeters(-10.085),
-          Units.inchesToMeters(-3.291),
+          Units.inchesToMeters(3.291),
           Units.inchesToMeters(17.188),
-          new Rotation3d(-Math.PI / 2, 0, 0));
+          new Rotation3d(-Math.PI / 2, 0, Math.PI));
 
   public static Matrix<N3, N1> QUESTNAV_STD_DEVS =
       VecBuilder.fill(
