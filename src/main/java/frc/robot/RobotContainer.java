@@ -31,6 +31,7 @@ import frc.robot.subsystems.shooter.*;
 import frc.robot.subsystems.vision.*;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -42,8 +43,11 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  */
 public class RobotContainer {
 
+  @AutoLogOutput(key = "Drivers/AddieDriving")
   private boolean addieBoolean;
+  @AutoLogOutput(key = "Drivers/OwenDriving")
   private boolean owenBoolean;
+  @AutoLogOutput(key = "Drivers/DriveFlipped")
   private boolean redFlip;
   private int addieOwenCount = 0;
   private final CommandXboxController addieController = new CommandXboxController(0);
