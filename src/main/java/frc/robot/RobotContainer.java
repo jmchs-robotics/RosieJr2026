@@ -11,9 +11,16 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.pathfinding.Pathfinding;
+import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -29,6 +36,7 @@ import frc.robot.subsystems.intake.*;
 import frc.robot.subsystems.oculus.*;
 import frc.robot.subsystems.shooter.*;
 import frc.robot.subsystems.vision.*;
+import frc.robot.util.LocalADStarAK;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -146,13 +154,37 @@ public class RobotContainer {
 
     // Set up auto routines
 
+    AutoBuilder.configure(
+        drive::getPose,
+        (pose) -> {
+          drive.setPose(pose);
+          oculus.setPose(new Pose3d(pose).transformBy(OculusConstants.ROBOT_TO_QUEST));
+        },
+        drive::getChassisSpeeds,
+        (speeds, feedForward) -> drive.runVelocity(speeds),
+        new PPHolonomicDriveController(
+            new PIDConstants(5.0, 0.0, 0.0), new PIDConstants(5.0, 0.0, 0.0)),
+        DriveConstants.ppConfig,
+        () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
+        drive);
+
+    Pathfinding.setPathfinder(new LocalADStarAK());
+    PathPlannerLogging.setLogActivePathCallback(
+        (activePath) -> {
+          Logger.recordOutput("Odometry/Trajectory", activePath.toArray(new Pose2d[0]));
+        });
+    PathPlannerLogging.setLogTargetPoseCallback(
+        (targetPose) -> {
+          Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
+        });
+
     NamedCommands.registerCommand(
         "intake",
         Commands.sequence(new SlapDown(intake).withTimeout(1), new IntakeFullSpeed(intake)));
     NamedCommands.registerCommand(
         "shoot",
         new ParallelCommandGroup(new ShooterSequence(shooter, hopper), new DriveToPoseAuto(drive)));
-    NamedCommands.registerCommand("reset oculus", new InstantCommand(() -> oculus.resetPose()));
+    NamedCommands.registerCommand("reset oculus", new InstantCommand());
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     autoChooser.addOption(
