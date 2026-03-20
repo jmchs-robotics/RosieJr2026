@@ -38,7 +38,8 @@ public class Oculus extends SubsystemBase {
     List<Pose2d> acceptedPoses = new LinkedList<Pose2d>();
     List<Pose3d> oculusPoses = new LinkedList<>();
 
-    for (PoseFrame questFrame : poseFrame) {
+    if (poseFrame.length != 0) {
+      var questFrame = poseFrame[poseFrame.length - 1];
 
       questPose = questFrame.questPose3d();
       oculusPoses.add(questPose);

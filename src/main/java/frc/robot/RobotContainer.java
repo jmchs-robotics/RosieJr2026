@@ -53,10 +53,13 @@ public class RobotContainer {
 
   @AutoLogOutput(key = "Drivers/AddieDriving")
   private boolean addieBoolean;
+
   @AutoLogOutput(key = "Drivers/OwenDriving")
   private boolean owenBoolean;
+
   @AutoLogOutput(key = "Drivers/DriveFlipped")
   private boolean redFlip;
+
   private int addieOwenCount = 0;
   private final CommandXboxController addieController = new CommandXboxController(0);
   private final CommandXboxController owenController = new CommandXboxController(1);
