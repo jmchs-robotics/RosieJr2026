@@ -82,7 +82,7 @@ public class RobotContainer {
 
     addieBoolean = true;
     owenBoolean = false;
-    redFlip = false;
+    redFlip = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red;
 
     switch (Constants.currentMode) {
       case REAL:
@@ -160,8 +160,8 @@ public class RobotContainer {
     AutoBuilder.configure(
         drive::getPose,
         (pose) -> {
-          drive.setPose(pose);
           oculus.setPose(new Pose3d(pose).transformBy(OculusConstants.ROBOT_TO_QUEST));
+          drive.setPose(pose);
         },
         drive::getChassisSpeeds,
         (speeds, feedForward) -> drive.runVelocity(speeds),
@@ -242,12 +242,21 @@ public class RobotContainer {
 
     configureButtonBindings();
 
-    drive.setDefaultCommand(
-        DriveCommands.joystickDrive(
-            drive,
-            () -> -addieController.getLeftY(),
-            () -> -addieController.getLeftX(),
-            () -> -addieController.getRightX()));
+    if (redFlip) {
+      drive.setDefaultCommand(
+          DriveCommands.joystickDrive(
+              drive,
+              () -> addieController.getLeftY(),
+              () -> addieController.getLeftX(),
+              () -> -addieController.getRightX()));
+    } else {
+      drive.setDefaultCommand(
+          DriveCommands.joystickDrive(
+              drive,
+              () -> -addieController.getLeftY(),
+              () -> -addieController.getLeftX(),
+              () -> -addieController.getRightX()));
+    }
   }
 
   // Addie and Owen switch controllers, reference to the Ian DK swap of 2023
@@ -265,7 +274,7 @@ public class RobotContainer {
                 drive,
                 () -> owenController.getLeftY(),
                 () -> owenController.getLeftX(),
-                () -> owenController.getRightX()));
+                () -> -owenController.getRightX()));
       } else {
         drive.setDefaultCommand(
             DriveCommands.joystickDrive(
@@ -284,7 +293,7 @@ public class RobotContainer {
                 drive,
                 () -> addieController.getLeftY(),
                 () -> addieController.getLeftX(),
-                () -> addieController.getRightX()));
+                () -> -addieController.getRightX()));
       } else {
         drive.setDefaultCommand(
             DriveCommands.joystickDrive(
@@ -327,14 +336,14 @@ public class RobotContainer {
                 drive,
                 () -> addieController.getLeftY(),
                 () -> addieController.getLeftX(),
-                () -> addieController.getRightX()));
+                () -> -addieController.getRightX()));
       } else {
         drive.setDefaultCommand(
             DriveCommands.joystickDrive(
                 drive,
                 () -> owenController.getLeftY(),
                 () -> owenController.getLeftX(),
-                () -> owenController.getRightX()));
+                () -> -owenController.getRightX()));
       }
     }
   }

@@ -15,7 +15,7 @@ public class OculusConstants {
           Units.inchesToMeters(-10.085),
           Units.inchesToMeters(3.291),
           Units.inchesToMeters(17.188),
-          new Rotation3d(-Math.PI / 2, 0, Math.PI));
+          new Rotation3d(Math.PI / 2, 0, Math.PI));
 
   public static Matrix<N3, N1> QUESTNAV_STD_DEVS =
       VecBuilder.fill(
@@ -24,5 +24,5 @@ public class OculusConstants {
           0.035 // the pose can be within 2 degrees of where you want to be
           );
 
-  public static final boolean useOculus = false;
+  public static final boolean useOculus = true;
 }
