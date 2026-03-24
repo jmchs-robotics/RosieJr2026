@@ -56,7 +56,7 @@ public class OculusToAutoPose implements Consumer<Command> {
               : new Pose3d(startingPose).transformBy(OculusConstants.ROBOT_TO_QUEST));
 
     } catch (Exception e) {
-      DriverStation.reportWarning("Failed to load selected auto path", null);
+      DriverStation.reportWarning("Failed to load selected auto path", false);
     }
   }
 }
