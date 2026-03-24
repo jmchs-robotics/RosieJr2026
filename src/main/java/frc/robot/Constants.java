@@ -30,12 +30,12 @@ public final class Constants {
     disableHAL = true;
   }
 
+  public static final Translation2d centerField =
+      new Translation2d(Units.inchesToMeters(651.22) / 2, Units.inchesToMeters(317.69) / 2);
+
   public static final Pose2d blueHub =
       new Pose2d(Units.inchesToMeters(182.11), Units.inchesToMeters(158.84), new Rotation2d());
-  public static final Pose2d redHub =
-      blueHub.rotateAround(
-          new Translation2d(Units.inchesToMeters(651.22) / 2, Units.inchesToMeters(317.69) / 2),
-          new Rotation2d(Math.PI));
+  public static final Pose2d redHub = blueHub.rotateAround(centerField, new Rotation2d(Math.PI));
 
   public static enum Mode {
     /** Running on a real robot. */

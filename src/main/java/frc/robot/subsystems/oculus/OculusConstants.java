@@ -15,6 +15,7 @@ public class OculusConstants {
           Units.inchesToMeters(-10.085),
           Units.inchesToMeters(3.291),
           Units.inchesToMeters(17.188),
+          // TODO - sign for Math.PI / 2 when its used for Marion
           new Rotation3d(Math.PI / 2, 0, Math.PI));
 
   public static Matrix<N3, N1> QUESTNAV_STD_DEVS =
