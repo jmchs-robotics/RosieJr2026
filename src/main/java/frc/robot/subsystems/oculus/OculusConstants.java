@@ -12,10 +12,17 @@ public class OculusConstants {
 
   public static Transform3d ROBOT_TO_QUEST =
       new Transform3d(
-          Units.inchesToMeters(-10.085),
-          Units.inchesToMeters(3.291),
-          Units.inchesToMeters(17.188),
-          // TODO - sign for Math.PI / 2 when its used for Marion
+
+          // Marion
+          // Units.inchesToMeters(-10.085),
+          // Units.inchesToMeters(3.291),
+          // Units.inchesToMeters(17.188),
+          // new Rotation3d(-Math.PI / 2, 0, Math.PI));
+
+          // Calypso
+          Units.inchesToMeters(11.204),
+          Units.inchesToMeters(0.957),
+          Units.inchesToMeters(12.625),
           new Rotation3d(Math.PI / 2, 0, Math.PI));
 
   public static Matrix<N3, N1> QUESTNAV_STD_DEVS =

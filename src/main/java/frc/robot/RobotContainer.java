@@ -363,9 +363,9 @@ public class RobotContainer {
                 // so that she can actually start driving
                 new InstantCommand(() -> addieOwenSwap()).ignoringDisable(true)));
 
-    addieController.a().and(() -> addieBoolean).whileTrue(new DriveToPose(drive, addieController));
+    addieController.a().and(() -> addieBoolean).whileTrue(new AimAtHub(drive, addieController));
 
-    owenController.a().and(() -> owenBoolean).whileTrue(new DriveToPose(drive, owenController));
+    owenController.a().and(() -> owenBoolean).whileTrue(new AimAtHub(drive, owenController));
 
     addieController
         .y()

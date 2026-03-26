@@ -3,6 +3,7 @@ package frc.robot.commands;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -14,7 +15,7 @@ import frc.robot.subsystems.drive.Drive;
 import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
 
-public class DriveToPose extends Command {
+public class AimAtHub extends Command {
 
   private static final LoggedTunableNumber thetakP = new LoggedTunableNumber("DriveToPose/ThetakP");
   private static final LoggedTunableNumber thetakD = new LoggedTunableNumber("DriveToPose/ThetakD");
@@ -35,7 +36,7 @@ public class DriveToPose extends Command {
   private final ProfiledPIDController thetaController =
       new ProfiledPIDController(thetakP.get(), 0.0, thetakD.get(), new Constraints(8.0, 20.0));
 
-  public DriveToPose(Drive drive, CommandXboxController driveController) {
+  public AimAtHub(Drive drive, CommandXboxController driveController) {
     this.drive = drive;
     this.driveController = driveController;
     if (drive != null) {
@@ -53,6 +54,10 @@ public class DriveToPose extends Command {
 
   @Override
   public void execute() {
+
+    Translation2d linearVelocity =
+        DriveCommands.getLinearVelocityFromJoysticks(
+            -driveController.getLeftY(), -driveController.getLeftX());
     if (thetakP.hasChanged(hashCode()) || thetakD.hasChanged(hashCode())) {
       thetaController.setP(thetakP.get());
       thetaController.setD(thetakD.get());
@@ -66,29 +71,27 @@ public class DriveToPose extends Command {
 
       currentToHubAngle =
           Constants.blueHub.getTranslation().minus(currentPose.getTranslation()).getAngle();
-
-      thetaVelocity =
-          thetaController.calculate(
-              drive.getRotation().getRadians(), currentToHubAngle.getRadians());
     } else {
       currentToHubAngle =
           Constants.redHub.getTranslation().minus(currentPose.getTranslation()).getAngle();
-
-      thetaVelocity =
-          thetaController.calculate(
-              drive.getRotation().getRadians(), currentToHubAngle.getRadians());
     }
 
-    if (drive != null
-        && Math.abs(drive.getRotation().getDegrees() - currentToHubAngle.getDegrees())
-            > threshold) {
-      drive.runVelocity(
-          ChassisSpeeds.fromFieldRelativeSpeeds(
-              -driveController.getLeftY() * drive.getMaxLinearSpeedMetersPerSec(),
-              -driveController.getLeftX() * drive.getMaxLinearSpeedMetersPerSec(),
-              thetaVelocity * drive.getMaxAngularSpeedRadPerSec(),
-              drive.getRotation()));
+    thetaVelocity =
+        thetaController.calculate(drive.getRotation().getRadians(), currentToHubAngle.getRadians());
+
+    if (Math.abs(drive.getRotation().getDegrees() - currentToHubAngle.getDegrees()) < threshold) {
+      thetaVelocity = 0;
     }
+
+    // if (Math.abs(drive.getRotation().getDegrees() - currentToHubAngle.getDegrees()) > threshold
+    //     && linearVelocity.getNorm() < (threshold / 10)) {
+    drive.runVelocity(
+        ChassisSpeeds.fromFieldRelativeSpeeds(
+            linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
+            linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
+            thetaVelocity * drive.getMaxAngularSpeedRadPerSec(),
+            isFlipped ? drive.getRotation().plus(new Rotation2d(Math.PI)) : drive.getRotation()));
+    // }
     Logger.recordOutput("current to hub angle", currentToHubAngle.getDegrees());
     Logger.recordOutput(
         "aiming error",
