@@ -331,7 +331,7 @@ public class Drive extends SubsystemBase {
   }
 
   public ChassisSpeeds getFieldVelocity() {
-    return ChassisSpeeds.fromFieldRelativeSpeeds(robotSetPointVelocity, getRotation());
+    return ChassisSpeeds.fromFieldRelativeSpeeds(getChassisSpeeds(), getRotation());
   }
 
   public void zeroHeading() {
