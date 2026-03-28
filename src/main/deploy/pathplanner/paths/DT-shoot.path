@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 1.7747931526390865,
-        "y": 3.912082738944366
+        "x": 1.645406562054208,
+        "y": 3.925021398002854
       },
       "prevControl": {
-        "x": 1.5160199714693294,
-        "y": 3.7568188302425103
+        "x": 1.9171184022824534,
+        "y": 4.364935805991441
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Tower-Shoot"
     }
   ],
   "rotationTargets": [],
@@ -34,7 +34,7 @@
   "eventMarkers": [
     {
       "name": "intakeSlapdown",
-      "waypointRelativePos": 0.542217116599653,
+      "waypointRelativePos": 0.2511816340310652,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -54,7 +54,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -35.53767779197439
+    "rotation": -36.147995900610546
   },
   "reversed": false,
   "folder": null,

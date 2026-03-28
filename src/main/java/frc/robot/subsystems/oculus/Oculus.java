@@ -55,7 +55,7 @@ public class Oculus extends SubsystemBase {
 
         // You can put some sort of filtering here if you would like!
 
-        if (OculusConstants.useOculus) {
+        if (OculusConstants.useOculus && questNav.isConnected()) {
           // Add the measurement to our estimator
           m_drive.addVisionMeasurement(
               robotPose.toPose2d(), timestamp, OculusConstants.QUESTNAV_STD_DEVS);

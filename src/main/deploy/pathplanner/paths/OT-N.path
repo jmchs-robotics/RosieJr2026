@@ -8,33 +8,38 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.368017118402282,
-        "y": 0.7938659058487882
+        "x": 9.279215406562054,
+        "y": 0.25044222539229727
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.9438876404513845,
-        "y": 2.180235955057841
+        "x": 7.532496433666189,
+        "y": 3.3427817403708993
       },
       "prevControl": {
-        "x": 7.872550561799699,
-        "y": 0.641393258428627
+        "x": 7.170213980028531,
+        "y": 1.8289586305278178
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Outpost-Neutral"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.33475479744136266,
+      "rotationDegrees": 90.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "intakeSlapdown",
-      "waypointRelativePos": 0.5605973578403206,
+      "name": "intake",
+      "waypointRelativePos": 0.1971640783254581,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",

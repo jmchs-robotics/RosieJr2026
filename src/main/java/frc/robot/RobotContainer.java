@@ -188,7 +188,7 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "shoot",
         new ParallelCommandGroup(new ShooterSequence(shooter, hopper), new DriveToPoseAuto(drive)));
-    NamedCommands.registerCommand("reset oculus", new InstantCommand());
+    NamedCommands.registerCommand("intakeSlapdown", new SlapDown(intake).withTimeout(1));
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     autoChooser.addOption(
