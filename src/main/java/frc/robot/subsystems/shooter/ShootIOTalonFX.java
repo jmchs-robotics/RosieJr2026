@@ -1,5 +1,6 @@
 package frc.robot.subsystems.shooter;
 
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 public class ShootIOTalonFX implements ShootIO {
@@ -19,7 +20,7 @@ public class ShootIOTalonFX implements ShootIO {
   }
 
   @Override
-  public void setOpenLoop(double speed) {
-    shooterMotor.set(-speed);
+  public void setVelocity(double speed) {
+    shooterMotor.setControl(new VelocityVoltage(-speed));
   }
 }

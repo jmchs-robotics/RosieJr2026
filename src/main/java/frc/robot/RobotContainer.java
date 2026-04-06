@@ -205,6 +205,8 @@ public class RobotContainer {
         .whileTrue(
             Commands.parallel(
                 new AdjustHood(hood), new ShooterRun(shoot), new TurretCommand(turret)));
+
+    driveController.leftTrigger().whileTrue(new AdjustHood(hood));
   }
 
   /**

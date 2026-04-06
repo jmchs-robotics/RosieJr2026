@@ -20,7 +20,8 @@ public class AdjustHood extends Command {
 
   @Override
   public void execute() {
-    hood.setPosition(Rotations.of(0));
+    // must be  > 3 && < 5
+    hood.setPosition(Rotations.of(4));
   }
 
   @Override

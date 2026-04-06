@@ -16,10 +16,11 @@ public class HoodIOTalonFX implements HoodIO {
     hoodMotor = new TalonFX(13);
     config = new TalonFXConfiguration();
 
-    config.Slot0.kP = 1;
+    config.Slot0.kP = 0.1;
     config.Slot0.kD = 0;
 
     hoodMotor.getConfigurator().apply(config);
+    hoodMotor.setPosition(0);
   }
 
   @Override
