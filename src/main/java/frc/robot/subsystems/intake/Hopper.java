@@ -26,7 +26,7 @@ public class Hopper extends SubsystemBase {
     hopperAlert.set(!inputs.hopperIsConnected);
   }
 
-  public void setMotor(double speed) {
+  public void setMotors(double speed) {
     io.setOpenLoop(speed);
   }
 }

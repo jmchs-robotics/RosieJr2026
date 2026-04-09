@@ -22,10 +22,10 @@ public class PassingSequence extends Command {
   public void execute() {
     if (m_timer.get() < .25) {
       m_shooter.setMotor(motorSpeed);
-      m_hopper.setMotor(0.7);
+      m_hopper.setMotors(0.7);
     } else {
       m_shooter.setMotor(motorSpeed);
-      m_hopper.setMotor(-0.7);
+      m_hopper.setMotors(-0.7);
     }
   }
 
@@ -38,7 +38,7 @@ public class PassingSequence extends Command {
   @Override
   public void end(boolean interrupted) {
     m_shooter.setMotor(0.0);
-    m_hopper.setMotor(0.0);
+    m_hopper.setMotors(0.0);
     m_timer.stop();
   }
 }

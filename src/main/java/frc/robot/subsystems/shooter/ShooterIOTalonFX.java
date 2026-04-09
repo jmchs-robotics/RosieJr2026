@@ -1,16 +1,14 @@
 package frc.robot.subsystems.shooter;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 public class ShooterIOTalonFX implements ShooterIO {
 
   private final TalonFX shooterMotor;
-  private final TalonFX followerMotor;
+  // private final TalonFX followerMotor;
 
   public ShooterIOTalonFX() {
 
@@ -21,8 +19,8 @@ public class ShooterIOTalonFX implements ShooterIO {
     config.Slot0.kP = 0.02;
     shooterMotor.getConfigurator().apply(config);
 
-    followerMotor = new TalonFX(15);
-    followerMotor.setControl(new Follower(9, MotorAlignmentValue.Aligned));
+    // followerMotor = new TalonFX(15);
+    // followerMotor.setControl(new Follower(9, MotorAlignmentValue.Aligned));
   }
 
   @Override
@@ -31,7 +29,7 @@ public class ShooterIOTalonFX implements ShooterIO {
     inputs.shooterCurrentAmps = shooterMotor.getSupplyCurrent().getValueAsDouble();
     inputs.shooterVelocityRotPerSec = shooterMotor.getRotorVelocity().getValueAsDouble();
     inputs.shooterIsConnected = shooterMotor.isConnected();
-    inputs.followerIsConnected = followerMotor.isConnected();
+    // inputs.followerIsConnected = followerMotor.isConnected();
   }
 
   @Override

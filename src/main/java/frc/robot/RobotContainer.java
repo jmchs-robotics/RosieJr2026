@@ -152,7 +152,7 @@ public class RobotContainer {
 
     // drive.setPose(new Pose2d(1.582, 4.034, new Rotation2d(0)));
     intake = new Intake(new IntakeIOMotors());
-    hopper = new Hopper(new HopperIOMotor());
+    hopper = new Hopper(new HopperIOMotors());
     oculus = new Oculus(drive);
     shooter = new Shooter(new ShooterIOTalonFX(), drive);
 
@@ -389,9 +389,9 @@ public class RobotContainer {
 
     addieController.povDown().and(() -> owenBoolean).whileTrue(new SlapDown(intake));
 
-    // owenController.povUp().and(() -> addieBoolean).whileTrue(new IntakeUp(intake));
+    owenController.povUp().and(() -> addieBoolean).whileTrue(new IntakeUp(intake));
 
-    // addieController.povUp().and(() -> owenBoolean).whileTrue(new IntakeUp(intake));
+    addieController.povUp().and(() -> owenBoolean).whileTrue(new IntakeUp(intake));
 
     addieController
         .rightTrigger()

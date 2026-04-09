@@ -17,11 +17,11 @@ public class HopperRun extends Command {
 
   @Override
   public void execute() {
-    m_Hopper.setMotor(-0.7);
+    m_Hopper.setMotors(-0.7);
   }
 
   @Override
   public void end(boolean interrupted) {
-    m_Hopper.setMotor(0);
+    m_Hopper.setMotors(0);
   }
 }

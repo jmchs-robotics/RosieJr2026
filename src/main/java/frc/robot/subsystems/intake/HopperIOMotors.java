@@ -2,29 +2,34 @@ package frc.robot.subsystems.intake;
 
 import static frc.robot.util.SparkUtil.*;
 
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
 import java.util.function.DoubleSupplier;
 
-public class HopperIOMotor implements HopperIO {
+public class HopperIOMotors implements HopperIO {
 
-  private final SparkFlex hopperMotor;
+  private final SparkMax hopperMotor;
   private final RelativeEncoder hopperEncoder;
 
-  public HopperIOMotor() {
+  private final TalonFX shootIndexMotor;
 
-    hopperMotor = new SparkFlex(12, MotorType.kBrushless);
+  public HopperIOMotors() {
+
+    hopperMotor = new SparkMax(12, MotorType.kBrushless);
     hopperEncoder = hopperMotor.getEncoder();
+
+    shootIndexMotor = new TalonFX(15);
   }
 
   @Override
   public void updateInputs(HopperIOInputs inputs) {
 
-    // inputs.hopperAppliedVolts = hopperMotor.getBusVoltage() * hopperMotor.getAppliedOutput();
-    // inputs.hopperCurrentAmps = hopperMotor.getOutputCurrent();
-    // inputs.hopperVelocityRotPerSec = hopperMotor.getEncoder().getVelocity();
-    // inputs.hopperIsConnected = sparkStickyFault;
+    inputs.ShootIndexAppliedVolts = shootIndexMotor.getSupplyVoltage().getValueAsDouble();
+    inputs.shootIndexCurrentAmps = shootIndexMotor.getSupplyCurrent().getValueAsDouble();
+    inputs.shootIndexVelocityRotPerSec = shootIndexMotor.getRotorVelocity().getValueAsDouble();
+    inputs.shootIndexIsConnected = shootIndexMotor.isConnected();
 
     sparkStickyFault = false;
 
@@ -43,5 +48,6 @@ public class HopperIOMotor implements HopperIO {
   @Override
   public void setOpenLoop(double speed) {
     hopperMotor.set(speed);
+    shootIndexMotor.set(-speed);
   }
 }
