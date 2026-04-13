@@ -20,7 +20,7 @@ public class IntakeUp extends Command {
 
   @Override
   public void execute() {
-    m_IntakeUp.setSlapDownMotor(0.3);
+    m_IntakeUp.setSlapDownMotor(0.2);
   }
 
   @Override

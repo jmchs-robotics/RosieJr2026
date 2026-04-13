@@ -1,8 +1,8 @@
 package frc.robot.subsystems.intake;
 
-//import static frc.robot.util.SparkUtil.*;
+// import static frc.robot.util.SparkUtil.*;
 
- import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.hardware.TalonFX;
 // import com.revrobotics.RelativeEncoder;
 // import com.revrobotics.spark.SparkLowLevel.MotorType;
 // import com.revrobotics.spark.SparkMax;
@@ -29,7 +29,6 @@ public class HopperIOMotors implements HopperIO {
     inputs.shootIndexVelocityRotPerSec = shootIndexMotor.getRotorVelocity().getValueAsDouble();
     inputs.shootIndexIsConnected = shootIndexMotor.isConnected();
 
-
     inputs.hopperAppliedVolts = shootIndexMotor.getSupplyVoltage().getValueAsDouble();
     inputs.hopperCurrentAmps = shootIndexMotor.getSupplyCurrent().getValueAsDouble();
     inputs.hopperVelocityRotPerSec = shootIndexMotor.getRotorVelocity().getValueAsDouble();
@@ -38,7 +37,7 @@ public class HopperIOMotors implements HopperIO {
 
   @Override
   public void setOpenLoop(double speed) {
-    hopperMotor.set(speed);
+    // hopperMotor.set(speed);
     shootIndexMotor.set(-speed);
   }
 }
