@@ -1,0 +1,26 @@
+{
+  "NetworkTables Settings": {
+    "mode": "Client (NT4)",
+    "serverTeam": "10.59.33.2"
+  },
+  "Server": {
+    "open": true
+  },
+  "transitory": {
+    "QuestNav": {
+      "QuestNavCommand##v_/QuestNav/request": {
+        "QuestNavPoseResetPayload##v_pose_reset_payload": {
+          "Pose3d##v_target_pose": {
+            "open": true
+          },
+          "open": true
+        },
+        "open": true
+      },
+      "open": true
+    },
+    "SmartDashboard": {
+      "open": true
+    }
+  }
+}

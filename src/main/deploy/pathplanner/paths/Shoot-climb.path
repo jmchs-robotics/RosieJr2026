@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.6424578313253011,
-        "y": 4.87643373493976
+        "x": 1.645406562054208,
+        "y": 3.925021398002854
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.0193493975903616,
-        "y": 4.9747831325301215
+        "x": 1.4501893596934503,
+        "y": 3.768847636114248
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Tower-Shoot"
     },
     {
       "anchor": {
-        "x": 2.838927710843373,
-        "y": 5.357253012048193
+        "x": 1.516019971469329,
+        "y": 3.7309415121255354
       },
       "prevControl": {
-        "x": 1.8882168674698794,
-        "y": 5.00756626506024
+        "x": 1.678717814833322,
+        "y": 3.920755662716859
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,7 +31,14 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "climb",
+      "waypointRelativePos": 1.0,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -42,13 +49,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -41.18592516570963
+    "rotation": 179.42127443439225
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -85.84035770628739
+    "rotation": -36.147995900610546
   },
   "useDefaultConstraints": true
 }

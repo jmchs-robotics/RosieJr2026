@@ -7,6 +7,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -19,9 +21,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 public final class Constants {
   public static final Mode simMode = Mode.SIM;
   public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
-  public static final Translation2d hubPose =
-      new Translation2d(Units.inchesToMeters(182.11), Units.inchesToMeters(158.84));
-  public static final boolean tuningMode = true;
+  public static final boolean tuningMode = false;
   public static final double loopPeriodSecs = 0.02;
 
   public static boolean disableHAL = false;
@@ -29,6 +29,13 @@ public final class Constants {
   public void disableHAL() {
     disableHAL = true;
   }
+
+  public static final Translation2d centerField =
+      new Translation2d(Units.inchesToMeters(651.22) / 2, Units.inchesToMeters(317.69) / 2);
+
+  public static final Pose2d blueHub =
+      new Pose2d(Units.inchesToMeters(182.11), Units.inchesToMeters(158.84), new Rotation2d());
+  public static final Pose2d redHub = blueHub.rotateAround(centerField, new Rotation2d(Math.PI));
 
   public static enum Mode {
     /** Running on a real robot. */
@@ -39,5 +46,10 @@ public final class Constants {
 
     /** Replaying from a log file. */
     REPLAY
+  }
+
+  public static final class IntakeConstants {
+
+    public static final int IntakeMotorID = 12;
   }
 }

@@ -11,9 +11,9 @@
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "O-shoot"
+            "name": "shoot"
           }
         }
       ]

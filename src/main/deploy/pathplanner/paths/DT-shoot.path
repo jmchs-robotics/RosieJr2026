@@ -3,35 +3,47 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.522253012048193,
-        "y": 0.6146265060240967
+        "x": 3.534450784593438,
+        "y": 7.2890727532097
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.522253012048193,
-        "y": 0.6146265060240967
+        "x": 3.1462910128388017,
+        "y": 6.344550641940086
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.1067710843373493,
-        "y": 2.516048192771084
+        "x": 1.645406562054208,
+        "y": 3.925021398002854
       },
       "prevControl": {
-        "x": 1.1067710843373493,
-        "y": 2.516048192771084
+        "x": 1.9171184022824534,
+        "y": 4.364935805991441
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Tower-Shoot"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "intakeSlapdown",
+      "waypointRelativePos": 0.2511816340310652,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "intake"
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -42,13 +54,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 29.475889003245797
+    "rotation": -36.147995900610546
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 178.85423716182484
+    "rotation": -25.016893478100073
   },
   "useDefaultConstraints": true
 }

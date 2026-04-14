@@ -29,25 +29,25 @@ public class VisionConstants {
   public static Transform3d robotToCamera1 =
       new Transform3d(
           new Translation3d(
-              Units.inchesToMeters(12.223),
-              Units.inchesToMeters(11.624),
-              Units.inchesToMeters(8.642)),
-          new Rotation3d(0, 0, Units.degreesToRadians(-30)));
+              Units.inchesToMeters(13.75), // -3.709, mmarion
+              Units.inchesToMeters(-1.5), // 10.604
+              Units.inchesToMeters(16.625)), // 20.368
+          new Rotation3d(0, 0, 0));
   public static Transform3d robotToCamera2 =
       new Transform3d(
           new Translation3d(
-              Units.inchesToMeters(12.223),
-              Units.inchesToMeters(-11.624),
-              Units.inchesToMeters(8.642)),
-          new Rotation3d(0, 0, Units.degreesToRadians(30)));
+              Units.inchesToMeters(-10.621),
+              Units.inchesToMeters(10.606),
+              Units.inchesToMeters(20.368)),
+          new Rotation3d(0, 0, Math.PI));
 
   // Basic filtering thresholds
   public static double maxAmbiguity = 0.3;
-  public static double maxZError = 1_000;
+  public static double maxZError = 0.75;
 
   // Standard deviation baselines, for 1 meter distance and 1 tag
   // (Adjusted automatically based on distance and # of tags)
-  public static double linearStdDevBaseline = 0.02; // Meters
+  public static double linearStdDevBaseline = 0.03; // Meters
   public static double angularStdDevBaseline = 0.06; // Radians
 
   // Standard deviation multipliers for each camera

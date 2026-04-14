@@ -1,0 +1,24 @@
+package frc.robot.subsystems.intake;
+
+import org.littletonrobotics.junction.AutoLog;
+
+public interface HopperIO {
+
+  @AutoLog
+  public static class HopperIOInputs {
+
+    public double shootIndexCurrentAmps = 0.0;
+    public double ShootIndexAppliedVolts = 0.0;
+    public double shootIndexVelocityRotPerSec = 0.0;
+    public boolean shootIndexIsConnected = false;
+
+    public double hopperCurrentAmps = 0.0;
+    public double hopperAppliedVolts = 0.0;
+    public double hopperVelocityRotPerSec = 0.0;
+    public boolean hopperIsConnected = false;
+  }
+
+  public default void updateInputs(HopperIOInputs inputs) {}
+
+  public default void setOpenLoop(double speed) {}
+}
