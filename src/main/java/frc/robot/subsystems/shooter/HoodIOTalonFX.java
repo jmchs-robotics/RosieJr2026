@@ -3,6 +3,8 @@ package frc.robot.subsystems.shooter;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 
@@ -16,8 +18,10 @@ public class HoodIOTalonFX implements HoodIO {
     hoodMotor = new TalonFX(13);
     config = new TalonFXConfiguration();
 
-    config.Slot0.kP = 0.1;
+    config.Slot0.kP = 1;
     config.Slot0.kD = 0;
+    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     hoodMotor.getConfigurator().apply(config);
     hoodMotor.setPosition(0);

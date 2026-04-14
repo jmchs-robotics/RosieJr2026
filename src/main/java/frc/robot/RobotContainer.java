@@ -450,7 +450,7 @@ public class RobotContainer {
     //             .ignoringDisable(true));
     // Shooter button binding
 
-    addieController.leftTrigger().whileTrue(new AdjustHood(hood));
+    addieController.leftBumper().whileTrue(new AdjustHood(hood));
   }
 
   /**
