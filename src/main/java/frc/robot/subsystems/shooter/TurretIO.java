@@ -1,6 +1,7 @@
 package frc.robot.subsystems.shooter;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.units.measure.Angle;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface TurretIO {
@@ -19,7 +20,7 @@ public interface TurretIO {
     return new Rotation2d();
   }
 
-  public default double getTurretPositionAsDouble() {
-    return 0;
-  }
+  public default void setPosition(Angle position) {}
+
+  public default void setOpenLoop(double speed) {}
 }
