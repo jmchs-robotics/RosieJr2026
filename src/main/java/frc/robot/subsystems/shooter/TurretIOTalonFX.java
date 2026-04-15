@@ -1,7 +1,5 @@
 package frc.robot.subsystems.shooter;
 
-import org.littletonrobotics.junction.Logger;
-
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -9,6 +7,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import org.littletonrobotics.junction.Logger;
 
 public class TurretIOTalonFX implements TurretIO {
 
@@ -16,7 +15,10 @@ public class TurretIOTalonFX implements TurretIO {
   private final TalonFXConfiguration config;
 
   private final DutyCycleEncoder throughBoreA = new DutyCycleEncoder(0);
+  private final double throughBoreAOffset = 0.143;
+
   private final DutyCycleEncoder throughBoreB = new DutyCycleEncoder(1);
+  private final double throughBoreBOffset = 0.670;
 
   public TurretIOTalonFX() {
 
@@ -37,7 +39,7 @@ public class TurretIOTalonFX implements TurretIO {
     inputs.turretVelocityRotPerSec = turretMotor.getRotorVelocity().getValueAsDouble();
 
     Logger.recordOutput("turret/throughBoreA", throughBoreA.get());
-    Logger.recordOutput("turret/throughBore", throughBoreB.get());
+    Logger.recordOutput("turret/throughBoreB", throughBoreB.get());
   }
 
   @Override
@@ -56,11 +58,11 @@ public class TurretIOTalonFX implements TurretIO {
   }
 
   private double CRTDegrees() {
-    double throughBoreAValue = throughBoreA.get();
+    double throughBoreAValue = throughBoreA.get() + throughBoreAOffset;
     if (throughBoreAValue < 0) {
       throughBoreAValue = 1 - throughBoreAValue;
     }
-    double throughBoreBValue = throughBoreB.get();
+    double throughBoreBValue = throughBoreB.get() + throughBoreBOffset;
     if (throughBoreBValue < 0) {
       throughBoreBValue = 1 - throughBoreBValue;
     }
@@ -85,7 +87,7 @@ public class TurretIOTalonFX implements TurretIO {
   }
 
   private int modInverse(int a, int b) {
-    int currentBIncrement = b;
+    // int currentBIncrement = b;
     int currentModInverse = 0;
     int finalModInverse = 1;
 

@@ -41,15 +41,14 @@ public class TurretCommand extends Command {
 
     ChassisSpeeds fieldRelativeSpeeds = drive.getFieldVelocity();
 
-    Translation2d offset = MovingAutoAimCalcs.getOffset(
-        fieldRelativeSpeeds.vxMetersPerSecond,
-        fieldRelativeSpeeds.vyMetersPerSecond, 
-        currentRobotPose.getTranslation(), 
-        currentHubPose.getTranslation()
-      );
-    
-    Rotation2d robotToHub =
-        offset.minus(currentRobotPose.getTranslation()).getAngle();
+    Translation2d offset =
+        MovingAutoAimCalcs.getOffset(
+            fieldRelativeSpeeds.vxMetersPerSecond,
+            fieldRelativeSpeeds.vyMetersPerSecond,
+            currentRobotPose.getTranslation(),
+            currentHubPose.getTranslation());
+
+    Rotation2d robotToHub = offset.minus(currentRobotPose.getTranslation()).getAngle();
     Rotation2d currentRobotRotation = currentRobotPose.getRotation();
     Rotation2d targetTurretDegrees =
         redFlip

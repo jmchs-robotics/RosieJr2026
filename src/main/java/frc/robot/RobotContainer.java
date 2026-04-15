@@ -403,7 +403,7 @@ public class RobotContainer {
         .whileTrue(
             Commands.parallel(
                 new AdjustHood(hood),
-                new TurretCommand(turret, drive),
+                // new TurretCommand(turret, drive),
                 new ShooterSequence(shoot, hopper)));
 
     owenController
