@@ -1,5 +1,7 @@
 package frc.robot.subsystems.shooter;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -33,6 +35,9 @@ public class TurretIOTalonFX implements TurretIO {
     inputs.turretAppliedVolts = turretMotor.getSupplyVoltage().getValueAsDouble();
     inputs.turretCurrentAmps = turretMotor.getSupplyCurrent().getValueAsDouble();
     inputs.turretVelocityRotPerSec = turretMotor.getRotorVelocity().getValueAsDouble();
+
+    Logger.recordOutput("turret/throughBoreA", throughBoreA.get());
+    Logger.recordOutput("turret/throughBore", throughBoreB.get());
   }
 
   @Override
