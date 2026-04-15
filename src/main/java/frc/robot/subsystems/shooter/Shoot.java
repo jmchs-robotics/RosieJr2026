@@ -61,7 +61,7 @@ public class Shoot extends SubsystemBase {
                       drive.getPose().getTranslation())); // distance between shooter and hub
     }
 
-    double velocity = (21 + 15 * ((shooterToHub - 4.1) / 13.2)) * 1.047 * 5.75 * 4;
+    double velocity = (21 + 15 * ((shooterToHub - 4.1) / 13.2)) * 1.047 * 5.75 * 8.4;
     // ((6.17 * (Math.pow(10, -3) * Math.pow(shooterToHub, 2))) + (-1.16 * shooterToHub) + 103);
     // (shooterToHub * Math.sin(ShooterConstants.shooterTheta)
     //         - (2
