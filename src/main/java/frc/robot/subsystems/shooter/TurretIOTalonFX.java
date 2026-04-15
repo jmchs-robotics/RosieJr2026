@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+
 import org.littletonrobotics.junction.Logger;
 
 public class TurretIOTalonFX implements TurretIO {
@@ -29,6 +30,8 @@ public class TurretIOTalonFX implements TurretIO {
     config.Slot0.kD = 0;
 
     turretMotor.getConfigurator().apply(config);
+
+    calibrateTurret();
   }
 
   @Override
@@ -53,16 +56,16 @@ public class TurretIOTalonFX implements TurretIO {
   }
 
   @Override
-  public void setPosition(Angle position) {
+  public void setTurretPosition(Angle position) {
     turretMotor.setControl(new PositionVoltage(position.in(Units.Rotations)));
   }
 
   private double CRTDegrees() {
-    double throughBoreAValue = throughBoreA.get() + throughBoreAOffset;
+    double throughBoreAValue = throughBoreA.get(); //  - throughBoreAOffset;
     if (throughBoreAValue < 0) {
       throughBoreAValue = 1 - throughBoreAValue;
     }
-    double throughBoreBValue = throughBoreB.get() + throughBoreBOffset;
+    double throughBoreBValue = throughBoreB.get(); // - throughBoreBOffset;
     if (throughBoreBValue < 0) {
       throughBoreBValue = 1 - throughBoreBValue;
     }
@@ -105,5 +108,9 @@ public class TurretIOTalonFX implements TurretIO {
       finalModInverse = t;
     }
     return finalModInverse < 0 ? finalModInverse + currentModInverse : finalModInverse;
+  }
+  
+  private void calibrateTurret() {
+    turretMotor.setPosition((CRTDegrees() * (200 / 7)) / 360.0);
   }
 }

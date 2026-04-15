@@ -27,9 +27,9 @@ public class Turret extends SubsystemBase {
 
   public void setTurretAngle(double degrees) {
 
-    double currentAngle = io.getPosition().getDegrees();
+    // double currentAngle = io.getPosition().getDegrees();
 
-    double distance = degrees - currentAngle;
+    // double distance = degrees - currentAngle;
 
     if (degrees < -135) {
       degrees += 270;
@@ -37,6 +37,6 @@ public class Turret extends SubsystemBase {
       degrees -= 270;
     }
 
-    io.setPosition(Degrees.of(degrees * (200 / 7)));
+    io.setTurretPosition(Degrees.of(degrees * (200 / 7)));
   }
 }

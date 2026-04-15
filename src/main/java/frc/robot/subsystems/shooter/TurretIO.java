@@ -20,7 +20,7 @@ public interface TurretIO {
     return new Rotation2d();
   }
 
-  public default void setPosition(Angle position) {}
+  public default void setTurretPosition(Angle position) {}
 
   public default void setOpenLoop(double speed) {}
 }
