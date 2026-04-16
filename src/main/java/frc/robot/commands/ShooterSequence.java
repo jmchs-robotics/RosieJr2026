@@ -23,7 +23,7 @@ public class ShooterSequence extends Command {
     if (m_timer.get() < .25) {
       motorSpeed = m_shoot.calculateSpeed();
       m_shoot.setMotor(motorSpeed);
-      // m_hopper.setMotors(-0.3);
+      m_hopper.setMotors(-0.1);
     } else {
       motorSpeed = m_shoot.calculateSpeed();
       m_shoot.setMotor(motorSpeed);

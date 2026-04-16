@@ -15,7 +15,7 @@ public class ShootIOTalonFX implements ShootIO {
     shootMotor.setNeutralMode(NeutralModeValue.Coast);
 
     TalonFXConfiguration config = new TalonFXConfiguration();
-    config.Slot0.kP = 0.02;
+    config.Slot0.kP = 0.04;
     shootMotor.getConfigurator().apply(config);
   }
 

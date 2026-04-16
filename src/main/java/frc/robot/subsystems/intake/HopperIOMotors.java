@@ -37,7 +37,7 @@ public class HopperIOMotors implements HopperIO {
 
   @Override
   public void setOpenLoop(double speed) {
-    // hopperMotor.set(speed);
+    hopperMotor.set(speed);
     shootIndexMotor.set(-speed);
   }
 }

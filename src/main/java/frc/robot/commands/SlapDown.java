@@ -18,7 +18,7 @@ public class SlapDown extends Command {
 
   @Override
   public void execute() {
-    m_slapDown.setSlapDownMotor(-0.3);
+    m_slapDown.setSlapDownMotor(-0.2);
   }
 
   @Override

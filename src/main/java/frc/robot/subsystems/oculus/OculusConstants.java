@@ -14,16 +14,16 @@ public class OculusConstants {
       new Transform3d(
 
           // Marion
-          // Units.inchesToMeters(-10.085),
-          // Units.inchesToMeters(3.291),
-          // Units.inchesToMeters(17.188),
-          // new Rotation3d(-Math.PI / 2, 0, Math.PI));
+          Units.inchesToMeters(-12.923),
+          Units.inchesToMeters(4.732),
+          Units.inchesToMeters(18.894),
+          new Rotation3d(0, 0, Math.PI));
 
-          // Calypso
-          Units.inchesToMeters(11.204),
-          Units.inchesToMeters(0.957),
-          Units.inchesToMeters(12.625),
-          new Rotation3d(Math.PI / 2, 0, Math.PI));
+  // Calypso
+  // Units.inchesToMeters(11.204),
+  // Units.inchesToMeters(0.957),
+  // Units.inchesToMeters(12.625),
+  // new Rotation3d(Math.PI / 2, 0, Math.PI));
 
   public static Matrix<N3, N1> QUESTNAV_STD_DEVS =
       VecBuilder.fill(

@@ -7,7 +7,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
-
 import org.littletonrobotics.junction.Logger;
 
 public class TurretIOTalonFX implements TurretIO {
@@ -16,17 +15,17 @@ public class TurretIOTalonFX implements TurretIO {
   private final TalonFXConfiguration config;
 
   private final DutyCycleEncoder throughBoreA = new DutyCycleEncoder(0);
-  private final double throughBoreAOffset = 0.143;
+  private final double throughBoreAOffset = 0.473;
 
   private final DutyCycleEncoder throughBoreB = new DutyCycleEncoder(1);
-  private final double throughBoreBOffset = 0.670;
+  private final double throughBoreBOffset = 0.565;
 
   public TurretIOTalonFX() {
 
     turretMotor = new TalonFX(14);
     config = new TalonFXConfiguration();
 
-    config.Slot0.kP = 1;
+    config.Slot0.kP = 0.1;
     config.Slot0.kD = 0;
 
     turretMotor.getConfigurator().apply(config);
@@ -61,11 +60,11 @@ public class TurretIOTalonFX implements TurretIO {
   }
 
   private double CRTDegrees() {
-    double throughBoreAValue = throughBoreA.get(); //  - throughBoreAOffset;
+    double throughBoreAValue = throughBoreA.get() - throughBoreAOffset;
     if (throughBoreAValue < 0) {
       throughBoreAValue = 1 - throughBoreAValue;
     }
-    double throughBoreBValue = throughBoreB.get(); // - throughBoreBOffset;
+    double throughBoreBValue = throughBoreB.get() - throughBoreBOffset;
     if (throughBoreBValue < 0) {
       throughBoreBValue = 1 - throughBoreBValue;
     }
@@ -77,7 +76,10 @@ public class TurretIOTalonFX implements TurretIO {
 
     double absoluteToothCount = calculateCRT((int) toothA, (int) toothB) + toothARemainder;
 
-    return (absoluteToothCount / 80) * 360 - 135;
+    double result = (absoluteToothCount / 80) * 360 - 135;
+    Logger.recordOutput("turret/CRTDegrees", result);
+
+    return result;
   }
 
   private int calculateCRT(int toothA, int toothB) {
@@ -85,8 +87,10 @@ public class TurretIOTalonFX implements TurretIO {
     int inverse = modInverse(13, 17);
 
     int x = (toothA + 13 * (Math.floorMod((toothB - toothA) * inverse, 17))) % 221;
+    x = x == 0 ? 221 : x;
+    Logger.recordOutput("turret/calcCRT", x);
 
-    return x == 0 ? 221 : x;
+    return x;
   }
 
   private int modInverse(int a, int b) {
@@ -107,9 +111,12 @@ public class TurretIOTalonFX implements TurretIO {
       currentModInverse = finalModInverse - q * currentModInverse;
       finalModInverse = t;
     }
+    finalModInverse = finalModInverse < 0 ? finalModInverse + currentModInverse : finalModInverse;
+    Logger.recordOutput("turret/modInverse", finalModInverse);
+
     return finalModInverse < 0 ? finalModInverse + currentModInverse : finalModInverse;
   }
-  
+
   private void calibrateTurret() {
     turretMotor.setPosition((CRTDegrees() * (200 / 7)) / 360.0);
   }

@@ -16,7 +16,7 @@ public class MovingAutoAimCalcs {
 
   public static final double flywheelRadius = Units.inchesToMeters(2);
 
-  public static InterpolatingDoubleTreeMap flightTimeMap;
+  public static InterpolatingDoubleTreeMap flightTimeMap = new InterpolatingDoubleTreeMap();
 
   static {
     flightTimeMap.put(1.41567635288239, 1.2);

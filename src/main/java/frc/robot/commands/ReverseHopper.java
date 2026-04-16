@@ -17,7 +17,7 @@ public class ReverseHopper extends Command {
 
   @Override
   public void execute() {
-    m_Hopper.setMotors(0.50);
+    m_Hopper.setMotors(0.80);
   }
 
   @Override
