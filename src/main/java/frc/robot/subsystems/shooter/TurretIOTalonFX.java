@@ -7,7 +7,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
-
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -77,31 +76,34 @@ public class TurretIOTalonFX implements TurretIO {
 
     double toothB = (throughBoreBValue * 17);
 
-    double absoluteToothCount = calculateCRT((int) toothA, (int) toothB) + toothARemainder;
+    double absoluteToothCount = (((170 * throughBoreAValue) + (52 * throughBoreBValue)) / 80) * 360;
+    // calculateCRT((int) toothA, (int) toothB) + toothARemainder;
 
-    return (absoluteToothCount / 80) * 360 - 135;
+    return absoluteToothCount - 135;
+    // (absoluteToothCount / 80) * 360 - 135;
   }
 
-  @AutoLogOutput(key = "turret/calcCRT")
+  // @AutoLogOutput(key = "turret/calcCRT")
   private int calculateCRT(int toothA, int toothB) {
 
     int inverse = modInverse(13, 17);
 
     int x = (toothA + 13 * (Math.floorMod((toothB - toothA) * inverse, 17))) % 221;
 
+    Logger.recordOutput("turret/calcCRT", x);
     return x == 0 ? 221 : x;
   }
 
-  @AutoLogOutput(key = "turret/modInverse")
+  // @AutoLogOutput(key = "turret/modInverse")
   private int modInverse(int a, int b) {
-    // int currentBIncrement = b;
+    int currentBIncrement = b;
     int currentModInverse = 0;
     int finalModInverse = 1;
 
     if (b == 1) {
       return 0;
     }
-    while (a < 1) {
+    while (a > 1) {
 
       int q = a / b;
       int t = b;
@@ -112,7 +114,8 @@ public class TurretIOTalonFX implements TurretIO {
       finalModInverse = t;
     }
 
-    return finalModInverse < 0 ? finalModInverse + currentModInverse : finalModInverse;
+    Logger.recordOutput("turret/modInverse", finalModInverse);
+    return finalModInverse < 0 ? finalModInverse + currentBIncrement : finalModInverse;
   }
 
   private void calibrateTurret() {

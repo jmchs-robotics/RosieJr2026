@@ -15,13 +15,14 @@ public class ShootIOTalonFX implements ShootIO {
     shootMotor.setNeutralMode(NeutralModeValue.Coast);
 
     TalonFXConfiguration config = new TalonFXConfiguration();
-    config.Slot0.kP = 0.04;
+    config.Slot0.kP = 0.06;
+    config.Slot0.kV = 0.14;
     shootMotor.getConfigurator().apply(config);
   }
 
   @Override
   public void updateInputs(ShootIOInputs inputs) {
-    inputs.shootAppliedVolts = shootMotor.getSupplyVoltage().getValueAsDouble();
+    inputs.shootAppliedVolts = shootMotor.getMotorVoltage().getValueAsDouble();
     inputs.shootCurrentAmps = shootMotor.getSupplyCurrent().getValueAsDouble();
     inputs.shootVelocityRotPerSec = shootMotor.getRotorVelocity().getValueAsDouble();
     inputs.shootIsConnected = shootMotor.isConnected();
