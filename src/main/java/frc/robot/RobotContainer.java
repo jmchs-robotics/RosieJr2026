@@ -147,7 +147,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 (pose) -> {});
 
-        vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
+        vision = new Vision(drive::addVisionMeasurement, new VisionIO() {});
 
         break;
     }

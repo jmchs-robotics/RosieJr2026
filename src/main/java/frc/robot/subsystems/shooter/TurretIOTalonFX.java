@@ -16,10 +16,10 @@ public class TurretIOTalonFX implements TurretIO {
   private final TalonFXConfiguration config;
 
   private final DutyCycleEncoder throughBoreA = new DutyCycleEncoder(0);
-  private final double throughBoreAOffset = 0.473;
+  private final double throughBoreAOffset = 0.653;
 
   private final DutyCycleEncoder throughBoreB = new DutyCycleEncoder(1);
-  private final double throughBoreBOffset = 0.565;
+  private final double throughBoreBOffset = 0.231;
 
   public TurretIOTalonFX() {
 
@@ -71,15 +71,21 @@ public class TurretIOTalonFX implements TurretIO {
       throughBoreBValue = 1 - throughBoreBValue;
     }
 
+    Logger.recordOutput("turret/throughBoreAwithOffset", throughBoreAValue);
+    Logger.recordOutput("turret/throughBoreBWithOffset", throughBoreBValue);
+
     double toothA = (throughBoreAValue * 13);
     double toothARemainder = toothA - (int) toothA;
 
     double toothB = (throughBoreBValue * 17);
 
-    double absoluteToothCount = (((170 * throughBoreAValue) + (52 * throughBoreBValue)) / 80) * 360;
+    double gohnGemimi = (((170 * throughBoreAValue) + (52 * throughBoreBValue)));
+    Logger.recordOutput("turret/GOhn Gemoji", gohnGemimi);
+    double absoluteToothCount = gohnGemimi % 221;
+    double toothCountToDegrees = (absoluteToothCount / 221) * 360;
     // calculateCRT((int) toothA, (int) toothB) + toothARemainder;
 
-    return absoluteToothCount - 135;
+    return toothCountToDegrees;
     // (absoluteToothCount / 80) * 360 - 135;
   }
 

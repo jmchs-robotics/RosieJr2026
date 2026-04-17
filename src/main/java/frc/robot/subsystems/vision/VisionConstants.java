@@ -29,17 +29,17 @@ public class VisionConstants {
   public static Transform3d robotToCamera1 =
       new Transform3d(
           new Translation3d(
-              Units.inchesToMeters(13.75), // -3.709, mmarion
-              Units.inchesToMeters(-1.5), // 10.604
-              Units.inchesToMeters(16.625)), // 20.368
-          new Rotation3d(0, 0, 0));
-  public static Transform3d robotToCamera2 =
-      new Transform3d(
-          new Translation3d(
-              Units.inchesToMeters(-10.621),
-              Units.inchesToMeters(10.606),
-              Units.inchesToMeters(20.368)),
+              Units.inchesToMeters(-13.75), // -3.709, mmarion
+              Units.inchesToMeters(-5.25), // 10.604
+              Units.inchesToMeters(16.125)), // 20.368
           new Rotation3d(0, 0, Math.PI));
+  //   public static Transform3d robotToCamera2 =
+  //       new Transform3d(
+  //           new Translation3d(
+  //               Units.inchesToMeters(-10.621),
+  //               Units.inchesToMeters(10.606),
+  //               Units.inchesToMeters(20.368)),
+  //           new Rotation3d(0, 0, Math.PI));
 
   // Basic filtering thresholds
   public static double maxAmbiguity = 0.3;

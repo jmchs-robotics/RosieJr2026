@@ -14,10 +14,10 @@ public class OculusConstants {
       new Transform3d(
 
           // Marion
+          Units.inchesToMeters(-4.732),
           Units.inchesToMeters(-12.923),
-          Units.inchesToMeters(4.732),
-          Units.inchesToMeters(18.894),
-          new Rotation3d(0, 0, Math.PI));
+          Units.inchesToMeters(19.269),
+          new Rotation3d(0, 0, -Math.PI / 2));
 
   // Calypso
   // Units.inchesToMeters(11.204),
