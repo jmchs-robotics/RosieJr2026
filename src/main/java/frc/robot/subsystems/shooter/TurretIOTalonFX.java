@@ -7,6 +7,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+
+import javax.lang.model.util.ElementScanner14;
+
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -41,8 +44,8 @@ public class TurretIOTalonFX implements TurretIO {
     inputs.turretCurrentAmps = turretMotor.getSupplyCurrent().getValueAsDouble();
     inputs.turretVelocityRotPerSec = turretMotor.getRotorVelocity().getValueAsDouble();
 
-    Logger.recordOutput("turret/throughBoreA", throughBoreA.get());
-    Logger.recordOutput("turret/throughBoreB", throughBoreB.get());
+    Logger.recordOutput("turret/throughBoreARaw", throughBoreA.get());
+    Logger.recordOutput("turret/throughBoreBRaw", throughBoreB.get());
   }
 
   @Override
@@ -62,6 +65,21 @@ public class TurretIOTalonFX implements TurretIO {
 
   @AutoLogOutput(key = "turret/CRTDegrees")
   private double CRTDegrees() {
+    //Define teeth counts for each gear.
+    double gearATeeth = 17;
+    double gearBTeeth = 13;
+    double mainGearTeeth = 80;
+    //Define CRT multipliers.
+    //If different numbers of teeth are used for gears than 13 and 17, the crtMult will be different.
+    //Theoretically, you can use modInverse to define these automatically without using brute force math.
+    double crtMult17T = 170;
+    double crtMult13T = 52;
+    
+    //Calculate numbers used for conversion of later results.
+    double crtRange = gearATeeth * gearBTeeth;
+    double degFactor = 360/mainGearTeeth;
+
+    //Handle encoder offsets, including "wrap-around" to account for any negative numbers caused by subtracting the offsets.
     double throughBoreAValue = throughBoreA.get() - throughBoreAOffset;
     if (throughBoreAValue < 0) {
       throughBoreAValue = 1 + throughBoreAValue;
@@ -70,38 +88,49 @@ public class TurretIOTalonFX implements TurretIO {
     if (throughBoreBValue < 0) {
       throughBoreBValue = 1 + throughBoreBValue;
     }
-
     Logger.recordOutput("turret/throughBoreAwithOffset", throughBoreAValue);
     Logger.recordOutput("turret/throughBoreBWithOffset", throughBoreBValue);
 
-    double toothA = (throughBoreAValue * 13);
-    double toothARemainder = toothA - (int) toothA;
+    //Convert encoders values to representative tooth positon.
+    double toothPosA = throughBoreAValue * gearATeeth;
+    double toothPosB = throughBoreBValue * gearBTeeth;
 
-    double toothB = (throughBoreBValue * 17);
-    double toothBRemainder = toothB - (int) toothB;
+    //CRT Tooth Position on a gear with teeth equal to n = (gearATeeth * gearBTeeth).
+    double crtToothNumber = ((crtMult17T * throughBoreBValue) + (crtMult13T * throughBoreAValue)) % 221;
+    Logger.recordOutput("turret/virtualTurretPosition", crtToothNumber);
 
-    double positionNumber = (((170 * toothBRemainder) + (52 * toothARemainder)));
-    Logger.recordOutput("turret/Position", positionNumber);
-    double absoluteToothCount = positionNumber % 221;
+    //Map the virtual n tooth gear to the main turret gear.
+    double turretToothNumber = crtToothNumber % 80;
 
-    double toothCountToDegrees = (absoluteToothCount / 221) * 360;
+    //Center the desired turret range around 0, the position it shoots straight relative to front.
+    //Remember units are in tooth number at this stage.
+    double turretROM = 60;
+    double centeredTToothNumber = turretToothNumber + (turretROM/2);
+    double finalTToothNumber;
 
-    // calculateCRT((int) toothA, (int) toothB) + toothARemainder;
+    //Reallow negative numbers to make the final result be relative to straight.
+    if (centeredTToothNumber > 50) {
+      finalTToothNumber = centeredTToothNumber - mainGearTeeth;
+    }
+    else {
+      finalTToothNumber = centeredTToothNumber;
+    }
 
-    return toothCountToDegrees + 135;
-    // (absoluteToothCount / 80) * 360 - 135;
+    //Convert the turret's centered tooth number to representative degree of rotation.
+    double turretDeg = finalTToothNumber * degFactor;
+    
   }
 
   // @AutoLogOutput(key = "turret/calcCRT")
-  private int calculateCRT(int toothA, int toothB) {
+  // private int calculateCRT(int toothA, int toothB) {
 
-    int inverse = modInverse(13, 17);
+  //   int inverse = modInverse(13, 17);
 
-    int x = (toothA + 13 * (Math.floorMod((toothB - toothA) * inverse, 17))) % 221;
+  //   int x = (toothA + 13 * (Math.floorMod((toothB - toothA) * inverse, 17))) % 221;
 
-    Logger.recordOutput("turret/calcCRT", x);
-    return x == 0 ? 221 : x;
-  }
+  //   Logger.recordOutput("turret/calcCRT", x);
+  //   return x == 0 ? 221 : x;
+  // }
 
   // @AutoLogOutput(key = "turret/modInverse")
   private int modInverse(int a, int b) {

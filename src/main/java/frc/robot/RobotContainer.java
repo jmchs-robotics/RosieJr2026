@@ -153,7 +153,7 @@ public class RobotContainer {
     }
 
     shoot = new Shoot(new ShootIOTalonFX(), drive);
-    hood = new Hood(new HoodIOTalonFX());
+    hood = new Hood(new HoodIO() {});
     turret = new Turret(new TurretIOTalonFX(), drive);
     // drive.setPose(new Pose2d(1.582, 4.034, new Rotation2d(0)));
     intake = new Intake(new IntakeIOMotors());

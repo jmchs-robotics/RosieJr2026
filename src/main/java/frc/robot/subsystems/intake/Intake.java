@@ -1,5 +1,7 @@
 package frc.robot.subsystems.intake;
 
+import org.littletonrobotics.junction.Logger;
+
 // kraken 60 and neo vortex
 // addie put this in to check
 import edu.wpi.first.units.measure.Angle;
@@ -24,7 +26,7 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    // Logger.processInputs("intake", inputs);
+    Logger.processInputs("intake", inputs);
 
     intakeWheelsAlert.set(!inputs.intakeIsConnected);
     slapDownAlert.set(!inputs.slapDownIsConnected);
