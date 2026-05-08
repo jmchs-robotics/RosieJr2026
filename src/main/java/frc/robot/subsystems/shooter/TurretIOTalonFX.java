@@ -96,7 +96,7 @@ public class TurretIOTalonFX implements TurretIO {
     double toothPosB = throughBoreBValue * gearBTeeth;
 
     //CRT Tooth Position on a gear with teeth equal to n = (gearATeeth * gearBTeeth).
-    double crtToothNumber = ((crtMult17T * throughBoreBValue) + (crtMult13T * throughBoreAValue)) % 221;
+    double crtToothNumber = ((crtMult17T * toothPosB) + (crtMult13T * toothPosA)) % 221;
     Logger.recordOutput("turret/virtualTurretPosition", crtToothNumber);
 
     //Map the virtual n tooth gear to the main turret gear.
@@ -118,7 +118,9 @@ public class TurretIOTalonFX implements TurretIO {
 
     //Convert the turret's centered tooth number to representative degree of rotation.
     double turretDeg = finalTToothNumber * degFactor;
-    
+
+    //End the function, returning the turret position in degrees.
+    return turretDeg;
   }
 
   // @AutoLogOutput(key = "turret/calcCRT")
