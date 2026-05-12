@@ -19,10 +19,10 @@ public class TurretIOTalonFX implements TurretIO {
   private final TalonFXConfiguration config;
 
   private final DutyCycleEncoder throughBoreA = new DutyCycleEncoder(0);
-  private final double throughBoreAOffset = 0.464;
+  private final double throughBoreAOffset = 0.144;
 
   private final DutyCycleEncoder throughBoreB = new DutyCycleEncoder(1);
-  private final double throughBoreBOffset = 0.980;
+  private final double throughBoreBOffset = 0.732;
 
   public TurretIOTalonFX() {
 
@@ -77,7 +77,7 @@ public class TurretIOTalonFX implements TurretIO {
     
     //Calculate numbers used for conversion of later results.
     double crtRange = gearATeeth * gearBTeeth;
-    double degFactor = 360/mainGearTeeth;
+    double degFactor = 360 / mainGearTeeth;
 
     //Handle encoder offsets, including "wrap-around" to account for any negative numbers caused by subtracting the offsets.
     double throughBoreAValue = throughBoreA.get() - throughBoreAOffset;
@@ -92,20 +92,20 @@ public class TurretIOTalonFX implements TurretIO {
     Logger.recordOutput("turret/throughBoreBWithOffset", throughBoreBValue);
 
     //Convert encoders values to representative tooth positon.
-    double toothPosA = throughBoreAValue * gearATeeth;
-    double toothPosB = throughBoreBValue * gearBTeeth;
+    double toothPosA = (int) (throughBoreAValue * gearATeeth);
+    double toothPosB = (int) (throughBoreBValue * gearBTeeth);
 
     //CRT Tooth Position on a gear with teeth equal to n = (gearATeeth * gearBTeeth).
     double crtToothNumber = ((crtMult17T * toothPosB) + (crtMult13T * toothPosA)) % 221;
     Logger.recordOutput("turret/virtualTurretPosition", crtToothNumber);
 
     //Map the virtual n tooth gear to the main turret gear.
-    double turretToothNumber = crtToothNumber % 80;
+    double turretToothNumber = crtToothNumber % mainGearTeeth;
 
     //Center the desired turret range around 0, the position it shoots straight relative to front.
     //Remember units are in tooth number at this stage.
     double turretROM = 60;
-    double centeredTToothNumber = turretToothNumber + (turretROM/2);
+    double centeredTToothNumber = turretToothNumber + (turretROM / 2);
     double finalTToothNumber;
 
     //Reallow negative numbers to make the final result be relative to straight.
