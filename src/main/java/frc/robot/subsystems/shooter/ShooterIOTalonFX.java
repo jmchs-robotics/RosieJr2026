@@ -1,7 +1,6 @@
 package frc.robot.subsystems.shooter;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -34,6 +33,7 @@ public class ShooterIOTalonFX implements ShooterIO {
 
   @Override
   public void setVelocity(double speed) {
-    shooterMotor.setControl(new VelocityVoltage(-speed));
+    // shooterMotor.setControl(new VelocityVoltage(-speed));
+    shooterMotor.set(speed);
   }
 }

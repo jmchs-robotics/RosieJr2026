@@ -64,17 +64,8 @@ public class Shooter extends SubsystemBase {
     }
 
     double velocity = (21 + 15 * ((shooterToHub - 4.1) / 13.2)) * 1.047 * 5.75 * 2;
-    // ((6.17 * (Math.pow(10, -3) * Math.pow(shooterToHub, 2))) + (-1.16 * shooterToHub) + 103);
-    // (shooterToHub * Math.sin(ShooterConstants.shooterTheta)
-    //         - (2
-    //             * Math.cos(ShooterConstants.shooterTheta)
-    //             * (ShooterConstants.ShooterToHubdeltaZ + ShooterConstants.arcToHub)))
-    //     / (Math.sin(ShooterConstants.shooterTheta)
-    //         * Math.cos(ShooterConstants.shooterTheta)
-    //         * Math.sqrt((2 * ShooterConstants.arcToHub / ShooterConstants.gravity)));
 
-    // double motorSpeed =
-    // (2.42 * Math.pow(10, -3) * (Math.pow(velocity, 2))) + (-0.127 * velocity) + 2.27;
-    return velocity;
+    // return velocity;
+    return 0.6;
   }
 }

@@ -412,6 +412,10 @@ public class RobotContainer {
         .and(() -> owenBoolean)
         .whileTrue(new PassingSequence(shooter, hopper));
 
+    addieController.leftBumper().and(() -> addieBoolean).whileTrue(new PassToKid(shooter, hopper));
+
+    owenController.leftBumper().and(() -> owenBoolean).whileTrue(new PassToKid(shooter, hopper));
+
     owenController
         .y()
         .and(() -> addieBoolean)
