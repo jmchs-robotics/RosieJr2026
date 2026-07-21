@@ -72,8 +72,8 @@ public class TurretIOTalonFX implements TurretIO {
     //Define CRT multipliers.
     //If different numbers of teeth are used for gears than 13 and 17, the crtMult will be different.
     //Theoretically, you can use modInverse to define these automatically without using brute force math.
-    double crtMult17T = 170;
-    double crtMult13T = 52;
+    double crtMult13T = 170;
+    double crtMult17T = 52;
     
     //Calculate numbers used for conversion of later results.
     double crtRange = gearATeeth * gearBTeeth;
@@ -93,10 +93,12 @@ public class TurretIOTalonFX implements TurretIO {
 
     //Convert encoders values to representative tooth positon.
     double toothPosA = (int) (throughBoreAValue * gearATeeth);
+    Logger.recordOutput("turret/toothPosA", toothPosA);
     double toothPosB = (int) (throughBoreBValue * gearBTeeth);
+    Logger.recordOutput("turret/toothPosB", toothPosB);
 
     //CRT Tooth Position on a gear with teeth equal to n = (gearATeeth * gearBTeeth).
-    double crtToothNumber = ((crtMult17T * toothPosB) + (crtMult13T * toothPosA)) % 221;
+    double crtToothNumber = ((crtMult17T * toothPosA) + (crtMult13T * toothPosB)) % crtRange;
     Logger.recordOutput("turret/virtualTurretPosition", crtToothNumber);
 
     //Map the virtual n tooth gear to the main turret gear.
@@ -105,16 +107,17 @@ public class TurretIOTalonFX implements TurretIO {
     //Center the desired turret range around 0, the position it shoots straight relative to front.
     //Remember units are in tooth number at this stage.
     double turretROM = 60;
-    double centeredTToothNumber = turretToothNumber + (turretROM / 2);
+    double centeredTToothNumber = ((turretToothNumber + (mainGearTeeth / 2)) % mainGearTeeth) - (mainGearTeeth / 2);
     double finalTToothNumber;
 
     //Reallow negative numbers to make the final result be relative to straight.
-    if (centeredTToothNumber > 50) {
-      finalTToothNumber = centeredTToothNumber - mainGearTeeth;
-    }
-    else {
-      finalTToothNumber = centeredTToothNumber;
-    }
+    // if (centeredTToothNumber > 50) {
+    //   finalTToothNumber = centeredTToothNumber - mainGearTeeth;
+    // }
+    // else {
+    //   finalTToothNumber = centeredTToothNumber;
+    // }
+    finalTToothNumber = centeredTToothNumber;
 
     //Convert the turret's centered tooth number to representative degree of rotation.
     double turretDeg = finalTToothNumber * degFactor;
