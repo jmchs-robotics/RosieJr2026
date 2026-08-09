@@ -16,7 +16,7 @@ public class ShooterRun extends Command {
   @Override
   public void execute() {
     motorSpeed = m_shooter.calculateSpeed();
-    m_shooter.setMotor(motorSpeed);
+    m_shooter.setMotor(-motorSpeed);
   }
 
   @Override

@@ -1,13 +1,16 @@
 package frc.robot.subsystems.shooter;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 public class ShooterIOTalonFX implements ShooterIO {
 
   private final TalonFX shooterMotor;
-  // private final TalonFX followerMotor;
+  private final TalonFX followerMotor;
+  private final TalonFX followerMotor2;
 
   public ShooterIOTalonFX() {
 
@@ -18,8 +21,11 @@ public class ShooterIOTalonFX implements ShooterIO {
     config.Slot0.kP = 0.02;
     shooterMotor.getConfigurator().apply(config);
 
-    // followerMotor = new TalonFX(15);
-    // followerMotor.setControl(new Follower(9, MotorAlignmentValue.Aligned));
+    followerMotor = new TalonFX(15);
+    followerMotor.setControl(new Follower(9, MotorAlignmentValue.Aligned));
+
+    followerMotor2 = new TalonFX(16);
+    followerMotor2.setControl(new Follower(9, MotorAlignmentValue.Opposed));
   }
 
   @Override

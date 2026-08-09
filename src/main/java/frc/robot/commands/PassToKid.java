@@ -20,10 +20,10 @@ public class PassToKid extends Command {
   @Override
   public void execute() {
     if (m_timer.get() < .25) {
-      m_shooter.setMotor(0.3);
+      m_shooter.setMotor(-0.3);
       // m_hopper.setMotors(-0.3);
     } else {
-      m_shooter.setMotor(0.3);
+      m_shooter.setMotor(-0.3);
       m_hopper.setMotors(0.8);
     }
   }
