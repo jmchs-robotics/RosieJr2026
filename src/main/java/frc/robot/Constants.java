@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -51,5 +52,31 @@ public final class Constants {
   public static final class IntakeConstants {
 
     public static final int IntakeMotorID = 12;
+  }
+
+  public static final class PivotConstants {
+
+    public static final int pivotMotorID = 0;
+
+    public static final double kP = 0;
+    public static final double kI = 0;
+    public static final double kD = 0;
+
+    public static final Angle kAngleDown = edu.wpi.first.units.Units.Rotations.of(0);
+    public static final Angle kAngleUp = edu.wpi.first.units.Units.Rotations.of(-0.26);
+  
+  }
+
+  public static final class shooterConstants {
+
+    public static final int pivotMotorID = 0;
+
+    public static final double kP = 0;
+    public static final double kI = 0;
+    public static final double kD = 0;
+
+    public static final Angle kAngleDown = edu.wpi.first.units.Units.Rotations.of(0);
+    public static final Angle kAngleUp = edu.wpi.first.units.Units.Rotations.of(-0.26);
+  
   }
 }
