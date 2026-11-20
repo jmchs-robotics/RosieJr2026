@@ -56,7 +56,7 @@ public final class Constants {
 
   public static final class PivotConstants {
 
-    public static final int pivotMotorID = 0;
+    public static final int pivotMotorID = 9;
 
     public static final double kP = 0;
     public static final double kI = 0;
@@ -64,19 +64,15 @@ public final class Constants {
 
     public static final Angle kAngleDown = edu.wpi.first.units.Units.Rotations.of(0);
     public static final Angle kAngleUp = edu.wpi.first.units.Units.Rotations.of(-0.26);
-  
   }
 
-  public static final class shooterConstants {
+  public static final class ShooterConstants {
 
-    public static final int pivotMotorID = 0;
+    public static final int rightMotorID = 10;
+    public static final int leftMotorID = 11;
 
     public static final double kP = 0;
     public static final double kI = 0;
     public static final double kD = 0;
-
-    public static final Angle kAngleDown = edu.wpi.first.units.Units.Rotations.of(0);
-    public static final Angle kAngleUp = edu.wpi.first.units.Units.Rotations.of(-0.26);
-  
   }
 }
