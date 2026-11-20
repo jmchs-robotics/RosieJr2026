@@ -1,22 +1,20 @@
 package frc.robot.subsystems.shooter;
 
-// TODO change to sparkflex
-// TODO make command
 // TODO implement in RobotContainer
 
+import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
 import frc.robot.Constants.ShooterConstants;
 
 public class Shooter {
 
-  private final SparkMax shooterRightMotor;
-  private final SparkMax shooterLeftMotor;
+  private final SparkFlex shooterRightMotor;
+  private final SparkFlex shooterLeftMotor;
 
   public Shooter() {
 
-    shooterRightMotor = new SparkMax(ShooterConstants.rightMotorID, MotorType.kBrushless);
-    shooterLeftMotor = new SparkMax(ShooterConstants.leftMotorID, MotorType.kBrushless);
+    shooterRightMotor = new SparkFlex(ShooterConstants.rightMotorID, MotorType.kBrushless);
+    shooterLeftMotor = new SparkFlex(ShooterConstants.leftMotorID, MotorType.kBrushless);
   }
 
   public void stopWheelMotors() {
