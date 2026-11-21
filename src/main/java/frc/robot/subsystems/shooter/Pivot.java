@@ -3,9 +3,10 @@ package frc.robot.subsystems.shooter;
 // TODO implement in RobotContainer
 
 import com.ctre.phoenix6.hardware.TalonFX;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.PivotConstants;
 
-public class Pivot {
+public class Pivot extends SubsystemBase {
 
   private final TalonFX pivotMotor1;
 
