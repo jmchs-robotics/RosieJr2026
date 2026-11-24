@@ -46,12 +46,6 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  */
 public class RobotContainer {
 
-  @AutoLogOutput(key = "Drivers/AddieDriving")
-  private boolean addieBoolean;
-
-  @AutoLogOutput(key = "Drivers/OwenDriving")
-  private boolean owenBoolean;
-
   @AutoLogOutput(key = "Drivers/DriveFlipped")
   private boolean redFlip;
 
@@ -61,6 +55,8 @@ public class RobotContainer {
   private final Drive drive;
   private final Oculus oculus;
   private final Vision vision;
+  private final Shooter shooter;
+  private final Pivot pivot;
 
   private final LoggedDashboardChooser<Command> autoChooser;
 
@@ -68,10 +64,10 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-
-    addieBoolean = true;
-    owenBoolean = false;
     redFlip = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red;
+
+    shooter = new Shooter();
+    pivot = new Pivot();
 
     switch (Constants.currentMode) {
       case REAL:
@@ -211,7 +207,6 @@ public class RobotContainer {
 
     driveController
         .start()
-        .and(() -> addieBoolean)
         .onTrue(
             Commands.runOnce(
                     () -> {
@@ -223,6 +218,10 @@ public class RobotContainer {
                     },
                     drive)
                 .ignoringDisable(true));
+
+    driveController.a().whileTrue(new ShooterCommand(shooter));
+
+    driveController.y().onTrue(new PivotCommand(pivot));
   }
 
   /**

@@ -1,8 +1,9 @@
 package frc.robot.subsystems.shooter;
 
-// TODO implement in RobotContainer
-
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.PivotConstants;
 
@@ -19,8 +20,7 @@ public class Pivot extends SubsystemBase {
     pivotMotor1.stopMotor();
   }
 
-  // TODO change to setposition and have it take in a position
-  public void setposition(double speed) {
-    pivotMotor1.set(speed);
+  public void setPosition(Angle angle) {
+    pivotMotor1.setControl(new PositionVoltage(angle.in(Units.Rotations)));
   }
 }
